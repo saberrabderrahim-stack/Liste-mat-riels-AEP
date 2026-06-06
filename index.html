@@ -48,7 +48,7 @@
         </div>
         <hr class="my-3 opacity-25">
        
-        <h4 class="text-center text-primary mb-4">🔐 Connexion Application AEP</h4>
+        <h4 class="text-center text-primary mb-4">🔑 Connexion Application AEP</h4>
         <div id="loginError" class="alert alert-danger d-none small">Identifiant ou mot de passe incorrect.</div>
         <form id="loginForm" onsubmit="handleLogin(event)">
             <div class="mb-3">
@@ -123,7 +123,7 @@
         </div>
  
         <div class="card">
-            <h5 class="card-title text-primary mb-3">➕ Ajouter un nœود</h5>
+            <h5 class="card-title text-primary mb-3">➕ Ajouter un nœud</h5>
             <form id="nodeForm" class="row g-2" onsubmit="addNodeRow(event)">
                 <div class="col-6 col-md-3">
                     <label class="form-label fw-bold mb-1">Type de nœud</label>
@@ -507,7 +507,7 @@
  
         tempRows.forEach(row => {
             if (row.entryType === 'pvc') {
-                const dnKey = row.source; // تخزين القطر فقط كمفتاح (مثال: "75")
+                const dnKey = row.source; 
                 const len = parseFloat(row.proj);
                 if (!isNaN(len)) {
                     pvcSummary[dnKey] = (pvcSummary[dnKey] || 0) + len;
@@ -550,7 +550,7 @@
         totalGeneralGlobal = 0;
         finalResults = [];
 
-        // 1. معالجة حسابات العقد والإكسسوارات
+        // 1. Matériels et équipements des nœuds
         Object.keys(summary).forEach(key => {
             const searchKeyClean = key.trim().toUpperCase().replace(/\s+/g, ' ');
             
@@ -577,9 +577,8 @@
             });
         });
 
-        // 2. معالجة حسابات قنوات PVC بناءً على الصيغة المطلوبة بدقة: TUYAUX PVC PN 16 Ø[Diameter]
+        // 2. Conduites PVC (TUYAUX PVC PN 16 Ø[Diameter])
         Object.keys(pvcSummary).forEach(diameter => {
-            // صياغة النص المستهدف للبحث بجدول الأسعار تلقائياً بناءً على القطر المدخل
             const targetedDesignation = `TUYAUX PVC PN 16 Ø${diameter}`;
             const targetClean = targetedDesignation.toUpperCase().replace(/\s+/g, ' ');
             
@@ -597,7 +596,7 @@
 
             finalResults.push({
                 article: artMatch ? artMatch['ARTICLE'] : '-',
-                designation: targetedDesignation, // عرض العبارة الرسمية بالجدول المستخرج
+                designation: targetedDesignation, 
                 qty: totalLength,
                 isPvc: true,
                 isGrillage: false,
@@ -606,7 +605,7 @@
             });
         });
 
-        // 3. الإضافة التلقائية لـ GRILLAGE AVERTISSEUR بمجموع أطوال القنوات
+        // 3. GRILLAGE AVERTISSEUR
         if (totalPvcLength > 0) {
             const grillageKey = "GRILLAGE AVERTISSEUR";
             
