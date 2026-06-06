@@ -2,7 +2,7 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Calcul des équipements de nœuds de réseaux AEP</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
@@ -15,6 +15,11 @@
         .table { font-size: 0.85rem; }
         .table th, .table td { padding: 8px 4px; }
        
+        /* Fix Auto-Zoom on Mobile Devices (Font size must be at least 16px) */
+        .form-control, .form-select, .form-control-sm, .form-select-sm {
+            font-size: 16px !important;
+        }
+
         /* Styles pour les logos et en-têtes administratifs */
         .logo-login { max-width: 140px; height: auto; display: block; margin: 0 auto 10px auto; object-fit: contain; border-radius: 8px; }
         .logo-header { max-width: 100px; height: auto; object-fit: contain; background-color: rgba(255, 255, 255, 0.9); padding: 5px; border-radius: 8px; }
@@ -123,10 +128,10 @@
         </div>
  
         <div class="card">
-            <h5 class="card-title text-primary mb-3">➕ Ajouter un nœud</h5>
+            <h5 class="card-title text-primary mb-3">➕ Ajouter un nœود</h5>
             <form id="nodeForm" class="row g-2" onsubmit="addNodeRow(event)">
                 <div class="col-6 col-md-3">
-                    <label class="form-label fw-bold mb-1">Type de nœud</label>
+                    <label class="form-label fw-bold mb-1">Type de nœود</label>
                     <select id="nodeType" class="form-select form-select-sm" onchange="toggleInputsBasedOnType()" required>
                         <option value="" selected disabled>Choisir...</option>
                         <option value="N">N (Nœud normal)</option>
