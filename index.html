@@ -1,0 +1,661 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Etude Réseau & Branchements</title>
+
+    <script src="https://cdn.sheetjs.com/xlsx-0.20.2/package/dist/xlsx.full.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'Segoe UI',Tahoma,sans-serif;background:#f4f7fb;color:#222;}
+
+/* LOGIN */
+.login-container{min-height:100vh;display:flex;justify-content:center;align-items:center;padding:20px;}
+.login-card{width:100%;max-width:450px;background:white;padding:35px;border-radius:20px;box-shadow:0 8px 25px rgba(0,0,0,.12);text-align:center;}
+.logo-login{width:220px;margin-bottom:20px;}
+.login-card h1{color:#0d47c9;margin-bottom:25px;}
+.login-card input{width:100%;padding:14px;margin-bottom:15px;border:1px solid #d7dce5;border-radius:10px;font-size:15px;}
+.login-card button{width:100%;padding:14px;border:none;border-radius:10px;background:#0d47c9;color:white;font-size:16px;font-weight:bold;cursor:pointer;transition:.3s;}
+.login-card button:hover{background:#0838a5;}
+.error{margin-top:15px;padding:10px;background:#fdeaea;color:#c62828;border-radius:8px;}
+.hidden{display:none;}
+
+/* HEADER */
+header{background:white;padding:20px;text-align:center;box-shadow:0 2px 10px rgba(0,0,0,.08);}
+.logo-header{width:240px;max-width:100%;}
+.header-title{margin-top:15px;}
+.header-title h2{color:#0d47c9;font-size:18px;line-height:1.5;}
+
+/* MAIN */
+main{max-width:1300px;margin:auto;padding:20px;}
+.card{background:white;border-radius:18px;padding:20px;margin-bottom:20px;box-shadow:0 2px 10px rgba(0,0,0,.08);}
+.card h3{color:#0d47c9;margin-bottom:20px;}
+.card h4{margin-top:20px;margin-bottom:12px;color:#1e8e3e;}
+label{display:block;font-weight:600;margin-bottom:5px;}
+input[type=text],input[type=number],input[type=file]{width:100%;padding:12px;border:1px solid #d9dfe8;border-radius:10px;margin-bottom:15px;font-size:15px;}
+.radio-group{display:flex;flex-wrap:wrap;gap:15px;background:#f8fafd;padding:12px;border-radius:10px;border:1px solid #e4e8ef;margin-bottom:15px;}
+.radio-group label{margin-bottom:0;}
+
+/* BUTTONS */
+button{cursor:pointer;}
+#btnAdd{width:100%;padding:14px;border:none;border-radius:10px;background:#0d47c9;color:white;font-size:15px;font-weight:bold;}
+#btnGenerateExcel{width:100%;padding:14px;border:none;border-radius:10px;background:#1e8e3e;color:white;font-size:15px;font-weight:bold;}
+#btnGenereExcel{width:100%;padding:14px;border:none;border-radius:10px;background:#6a1b9a;color:white;font-size:15px;font-weight:bold;margin-top:10px;}
+.edit-btn{background:#ff9800;color:white;border:none;padding:8px 10px;border-radius:6px;}
+.delete-btn{background:#d32f2f;color:white;border:none;padding:8px 10px;border-radius:6px;}
+
+/* SUMMARY */
+.summary-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;}
+.summary-grid div{background:#f8fafd;border:1px solid #dfe5ee;border-radius:10px;padding:15px;text-align:center;font-weight:bold;color:#0d47c9;}
+
+/* TABLE */
+table{width:100%;border-collapse:collapse;}
+thead{background:#0d47c9;color:white;}
+th,td{border:1px solid #dbe2ec;padding:8px;text-align:center;}
+tbody tr:nth-child(even){background:#f8fafd;}
+tbody tr:hover{background:#eef4ff;}
+
+/* MOBILE */
+@media(max-width:768px){
+    main{padding:10px;}
+    .header-title h2{font-size:15px;}
+    table{display:block;overflow-x:auto;white-space:nowrap;}
+    th,td{font-size:12px;}
+    .logo-header{width:180px;}
+    .logo-login{width:180px;}
+}
+</style>
+</head>
+
+<body>
+
+<!-- ================= LOGIN ================= -->
+
+<div id="loginSection" class="login-container">
+    <div class="login-card">
+        <img src="logo.png" class="logo-login">
+        <h1>Connexion</h1>
+        <input type="text" id="loginUser" placeholder="Nom d'utilisateur">
+        <input type="password" id="loginPass" placeholder="Mot de passe">
+        <button id="btnLogin">ACCÉDER</button>
+        <div id="loginError" class="error hidden">Identifiant ou mot de passe incorrect</div>
+    </div>
+</div>
+
+<!-- ================= APPLICATION ================= -->
+
+<div id="appSection" class="hidden">
+
+    <header>
+        <img src="logo.png" class="logo-header">
+        <div class="header-title">
+            <h2>DIRECTION PREFECTORALE</h2>
+            <h2>AIN CHOCK HAY HASSANI</h2>
+            <h2>DEPARTEMENT ETUDES ET TRAVAUX</h2>
+            <h2>DIVISION EAU POTABLE</h2>
+        </div>
+    </header>
+
+    <main>
+
+        <!-- FORMULAIRE -->
+        <section class="card">
+            <h3>Informations Tronçon</h3>
+
+            <label>Nom du projet</label>
+            <input type="text" id="nomProjet" placeholder="Nom du projet">
+
+            <label>Nom du tronçon</label>
+            <input type="text" id="troncon">
+
+            <label>Diamètre Nominal</label>
+            <div class="radio-group">
+                <label><input type="radio" name="dn" value="75">75</label>
+                <label><input type="radio" name="dn" value="90">90</label>
+                <label><input type="radio" name="dn" value="110">110</label>
+                <label><input type="radio" name="dn" value="160">160</label>
+                <label><input type="radio" name="dn" value="225">225</label>
+                <label><input type="radio" name="dn" value="315">315</label>
+            </div>
+
+            <h4>Revêtements</h4>
+            <label>TN</label>
+            <input type="number" id="tn" value="">
+            <label>Chaussée</label>
+            <input type="number" id="chaussee" value="">
+            <label>Pavé</label>
+            <input type="number" id="pave" value="">
+            <label>Carrelage O</label>
+            <input type="number" id="carrelageO" value="">
+            <label>Carrelage S</label>
+            <input type="number" id="carrelageS" value="">
+            <label>Béton</label>
+            <input type="number" id="beton" value="">
+
+            <h4>Vannes & Raccordements</h4>
+            <label>Vanne &lt;= 150</label>
+            <input type="number" id="vanne1" value="">
+            <label>Vanne &gt;150 &lt;=300</label>
+            <input type="number" id="vanne2" value="">
+            <label>Raccordement &lt;=200</label>
+            <input type="number" id="raccord1" value="">
+            <label>Raccordement &gt;200 &lt;=300</label>
+            <input type="number" id="raccord2" value="">
+
+            <h4>Perçage</h4>
+            <div class="radio-group">
+                <label><input type="radio" name="percage" value="PVC">PVC</label>
+                <label><input type="radio" name="percage" value="FD">FD</label>
+                <label><input type="radio" name="percage" value="AC">AC</label>
+            </div>
+
+            <label>PI</label>
+            <input type="number" id="pi" value="">
+
+            <button id="btnAdd">Ajouter / Modifier</button>
+        </section>
+
+        <!-- EXCEL -->
+        <section class="card">
+            <h3>Modèle Excel</h3>
+            <input type="file" id="excelTemplate" accept=".xlsx">
+            <button id="btnGenerateExcel">Générer le fichier étude</button>
+            <button id="btnGenereExcel">Générer EXCEL</button>
+        </section>
+
+        <!-- RESUME -->
+        <section class="card">
+            <h3>Longueurs Totales par DN</h3>
+            <div class="summary-grid">
+                <div id="sum75">DN75 : 0</div>
+                <div id="sum90">DN90 : 0</div>
+                <div id="sum110">DN110 : 0</div>
+                <div id="sum160">DN160 : 0</div>
+                <div id="sum225">DN225 : 0</div>
+                <div id="sum315">DN315 : 0</div>
+            </div>
+        </section>
+
+        <!-- TABLEAU -->
+        <section class="card">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;">
+                <h3 style="margin-bottom:0;">Liste des Tronçons</h3>
+                <button onclick="supprimerTous()" style="background:#d32f2f;color:white;border:none;padding:9px 16px;border-radius:8px;font-weight:bold;">Supprimer tous</button>
+            </div>
+            <table id="tronconTable">
+                <thead>
+                    <tr>
+                        <th>Tronçon</th><th>DN</th><th>TN</th><th>Chaussée</th>
+                        <th>Pavé</th><th>Car.O</th><th>Car.S</th><th>Béton</th>
+                        <th>V&lt;=150</th><th>V&gt;150</th><th>R&lt;=200</th><th>R&gt;200</th>
+                        <th>Perçage</th><th>PI</th><th>Modifier</th><th>Supprimer</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </section>
+
+    </main>
+</div>
+
+<script>
+/* ==========================
+   CONFIGURATION
+========================== */
+
+const USERNAME = "Asaber";
+const PASSWORD = "Al@e16Lokmn23";
+
+let editIndex = -1;
+
+/* ==========================
+   INITIALISATION
+========================== */
+
+document.addEventListener("DOMContentLoaded", () => {
+    document.getElementById("loginUser").value = USERNAME;
+    document.getElementById("loginPass").value = PASSWORD;
+    document.getElementById("btnLogin").addEventListener("click", login);
+    document.getElementById("btnAdd").addEventListener("click", addOrUpdateTroncon);
+    document.getElementById("btnGenerateExcel").addEventListener("click", generateExcel);
+    document.getElementById("btnGenereExcel").addEventListener("click", genereExcel);
+    loadData();
+    updateSummary();
+});
+
+/* ==========================
+   LOGIN
+========================== */
+
+function login(){
+    const user = document.getElementById("loginUser").value.trim();
+    const pass = document.getElementById("loginPass").value.trim();
+    if(user === USERNAME && pass === PASSWORD){
+        document.getElementById("loginSection").classList.add("hidden");
+        document.getElementById("appSection").classList.remove("hidden");
+    }else{
+        document.getElementById("loginError").classList.remove("hidden");
+    }
+}
+
+/* ==========================
+   AJOUT / MODIFICATION
+========================== */
+
+function addOrUpdateTroncon(){
+    const troncon = document.getElementById("troncon").value.trim();
+    if(troncon === ""){ alert("Nom du tronçon obligatoire"); return; }
+    const dnRadio = document.querySelector('input[name="dn"]:checked');
+    if(!dnRadio){ alert("Choisir un DN"); return; }
+    const data = {
+        troncon,
+        dn        : dnRadio.value,
+        tn        : document.getElementById("tn").value || 0,
+        chaussee  : document.getElementById("chaussee").value || 0,
+        pave      : document.getElementById("pave").value || 0,
+        carrelageO: document.getElementById("carrelageO").value || 0,
+        carrelageS: document.getElementById("carrelageS").value || 0,
+        beton     : document.getElementById("beton").value || 0,
+        vanne1    : document.getElementById("vanne1").value || 0,
+        vanne2    : document.getElementById("vanne2").value || 0,
+        raccord1  : document.getElementById("raccord1").value || 0,
+        raccord2  : document.getElementById("raccord2").value || 0,
+        percage   : document.querySelector('input[name="percage"]:checked')?.value || "",
+        pi        : document.getElementById("pi").value || 0
+    };
+    let troncons = JSON.parse(localStorage.getItem("troncons")) || [];
+    if(editIndex === -1){ troncons.push(data); }
+    else{ troncons[editIndex] = data; editIndex = -1; }
+    localStorage.setItem("troncons", JSON.stringify(troncons));
+    renderTable();
+    resetForm();
+    updateSummary();
+}
+
+/* ==========================
+   AFFICHAGE TABLEAU
+========================== */
+
+function renderTable(){
+    const tbody = document.querySelector("#tronconTable tbody");
+    tbody.innerHTML = "";
+    const troncons = JSON.parse(localStorage.getItem("troncons")) || [];
+    troncons.forEach((item, index) => {
+        const row = document.createElement("tr");
+        row.innerHTML = `
+            <td>${item.troncon}</td><td>${item.dn}</td><td>${item.tn}</td>
+            <td>${item.chaussee}</td><td>${item.pave}</td><td>${item.carrelageO}</td>
+            <td>${item.carrelageS}</td><td>${item.beton}</td><td>${item.vanne1}</td>
+            <td>${item.vanne2}</td><td>${item.raccord1}</td><td>${item.raccord2}</td>
+            <td>${item.percage}</td><td>${item.pi}</td>
+            <td><button class="edit-btn" onclick="editTroncon(${index})">Modifier</button></td>
+            <td><button class="delete-btn" onclick="deleteTroncon(${index})">Supprimer</button></td>`;
+        tbody.appendChild(row);
+    });
+}
+
+/* ==========================
+   MODIFIER
+========================== */
+
+function editTroncon(index){
+    const troncons = JSON.parse(localStorage.getItem("troncons")) || [];
+    const item = troncons[index];
+    editIndex = index;
+    document.getElementById("troncon").value = item.troncon;
+    document.querySelector(`input[name="dn"][value="${item.dn}"]`).checked = true;
+    document.getElementById("tn").value        = item.tn;
+    document.getElementById("chaussee").value  = item.chaussee;
+    document.getElementById("pave").value      = item.pave;
+    document.getElementById("carrelageO").value= item.carrelageO;
+    document.getElementById("carrelageS").value= item.carrelageS;
+    document.getElementById("beton").value     = item.beton;
+    document.getElementById("vanne1").value    = item.vanne1;
+    document.getElementById("vanne2").value    = item.vanne2;
+    document.getElementById("raccord1").value  = item.raccord1;
+    document.getElementById("raccord2").value  = item.raccord2;
+    if(item.percage){
+        document.querySelector(`input[name="percage"][value="${item.percage}"]`).checked = true;
+    }
+    document.getElementById("pi").value = item.pi;
+    window.scrollTo({ top:0, behavior:"smooth" });
+}
+
+/* ==========================
+   SUPPRIMER
+========================== */
+
+function supprimerTous(){
+    if(!confirm("Supprimer tous les tronçons ?")) return;
+    localStorage.removeItem("troncons");
+    renderTable();
+    updateSummary();
+}
+
+function deleteTroncon(index){
+    if(!confirm("Supprimer ce tronçon ?")) return;
+    let troncons = JSON.parse(localStorage.getItem("troncons")) || [];
+    troncons.splice(index, 1);
+    localStorage.setItem("troncons", JSON.stringify(troncons));
+    renderTable();
+    updateSummary();
+}
+
+/* ==========================
+   RESET FORM
+========================== */
+
+function resetForm(){
+    document.getElementById("troncon").value = "";
+    ["tn","chaussee","pave","carrelageO","carrelageS","beton","vanne1","vanne2","raccord1","raccord2","pi"]
+        .forEach(id => document.getElementById(id).value = 0);
+    document.querySelectorAll('input[name="dn"]').forEach(r => r.checked = false);
+    document.querySelectorAll('input[name="percage"]').forEach(r => r.checked = false);
+}
+
+function loadData(){ renderTable(); }
+
+/* ==========================
+   SUMMARY DN
+========================== */
+
+function updateSummary(){
+    let sums = {75:0,90:0,110:0,160:0,225:0,315:0};
+    const troncons = JSON.parse(localStorage.getItem("troncons")) || [];
+    troncons.forEach(item => {
+        sums[item.dn] += Number(item.tn)+Number(item.chaussee)+Number(item.pave)+Number(item.carrelageO)+Number(item.carrelageS)+Number(item.beton);
+    });
+    document.getElementById("sum75").innerText  = "DN75 : "  + sums[75]  + " m";
+    document.getElementById("sum90").innerText  = "DN90 : "  + sums[90]  + " m";
+    document.getElementById("sum110").innerText = "DN110 : " + sums[110] + " m";
+    document.getElementById("sum160").innerText = "DN160 : " + sums[160] + " m";
+    document.getElementById("sum225").innerText = "DN225 : " + sums[225] + " m";
+    document.getElementById("sum315").innerText = "DN315 : " + sums[315] + " m";
+}
+
+/* =====================================
+   GENERATE EXCEL (SheetJS)
+===================================== */
+
+async function generateExcel(){
+    const fileInput = document.getElementById("excelTemplate");
+    if(!fileInput.files.length){ alert("Veuillez sélectionner le modèle Excel"); return; }
+    const troncons = JSON.parse(localStorage.getItem("troncons")) || [];
+    if(troncons.length === 0){ alert("Aucun tronçon à exporter"); return; }
+    try{
+        const arrayBuffer = await fileInput.files[0].arrayBuffer();
+        const workbook = XLSX.read(arrayBuffer,{type:"array",cellStyles:true,cellFormula:true,cellNF:true,cellDates:true});
+        let sheetName = null;
+        workbook.SheetNames.forEach(name => { if(name.trim()==="Données de base Réseau") sheetName = name; });
+        if(!sheetName){ alert("Feuille 'Données de base Réseau' introuvable"); return; }
+        const sheet = workbook.Sheets[sheetName];
+        let row = 3;
+        troncons.forEach(item => {
+            writeCell(sheet,"A"+row,item.troncon);
+            writeCell(sheet,"B"+row,Number(item.dn));
+            writeCell(sheet,"G"+row,Number(item.tn));
+            writeCell(sheet,"H"+row,Number(item.chaussee));
+            writeCell(sheet,"J"+row,Number(item.pave));
+            writeCell(sheet,"K"+row,Number(item.carrelageO));
+            writeCell(sheet,"L"+row,Number(item.carrelageS));
+            writeCell(sheet,"M"+row,Number(item.beton));
+            writeCell(sheet,"T"+row,Number(item.vanne1));
+            writeCell(sheet,"U"+row,Number(item.vanne2));
+            writeCell(sheet,"V"+row,Number(item.raccord1));
+            writeCell(sheet,"W"+row,Number(item.raccord2));
+            writeCell(sheet,"X"+row,item.percage==="PVC"?1:0);
+            writeCell(sheet,"Y"+row,item.percage==="FD"?1:0);
+            writeCell(sheet,"Z"+row,item.percage==="AC"?1:0);
+            writeCell(sheet,"AA"+row,Number(item.pi));
+            row++;
+        });
+        workbook.Workbook = workbook.Workbook || {};
+        workbook.Workbook.CalcPr = {calcMode:"auto",fullCalcOnLoad:true,forceFullCalc:true};
+        const date = new Date().toISOString().slice(0,10);
+        XLSX.writeFile(workbook,"Etude_Reseau_"+date+".xlsx");
+        alert("Fichier généré avec succès");
+    }catch(error){ console.error(error); alert("Erreur lors de la génération du fichier"); }
+}
+
+function writeCell(sheet, address, value){
+    sheet[address] = typeof value==="number" ? {t:"n",v:value} : {t:"s",v:value};
+}
+
+/* =====================================
+   GENERE EXCEL — ZIP DIRECT
+===================================== */
+
+async function genereExcel(){
+    const fileInput = document.getElementById("excelTemplate");
+    if(!fileInput.files.length){ alert("Veuillez sélectionner le modèle Excel"); return; }
+    try{
+        const nomProjet = document.getElementById("nomProjet").value.trim() || "Genere_Excel";
+        const arrayBuffer = await fileInput.files[0].arrayBuffer();
+        const zip = await JSZip.loadAsync(arrayBuffer);
+
+        const wbXml   = await zip.file("xl/workbook.xml").async("string");
+        const relsXml = await zip.file("xl/_rels/workbook.xml.rels").async("string");
+
+        const sheetMatches = [...wbXml.matchAll(/<sheet\b[^>]*name="([^"]*)"[^>]*r:id="([^"]*)"/g)];
+        let rId = null;
+        sheetMatches.forEach(m => { if(m[1].trim()==="Données de base Réseau") rId = m[2]; });
+        if(!rId){ alert("Feuille 'Données de base Réseau' introuvable"); return; }
+
+        const relMatch =
+            relsXml.match(new RegExp(`Id="${rId}"[^>]*Target="([^"]*)"`)) ||
+            relsXml.match(new RegExp(`Target="([^"]*)"[^>]*Id="${rId}"`));
+        if(!relMatch){ alert("Relation de la feuille introuvable"); return; }
+
+        const sheetPath = "xl/" + relMatch[1].replace(/^\.\.\//, "");
+        let sheetXml = await zip.file(sheetPath).async("string");
+
+        const troncons = JSON.parse(localStorage.getItem("troncons")) || [];
+        if(troncons.length === 0){ alert("Aucun tronçon dans la liste"); return; }
+
+        troncons.forEach((item, index) => {
+            const row = 3 + index;
+            const percage = item.percage || "";
+            const map = {
+                [`A${row}`] : item.troncon,
+                [`B${row}`] : item.dn       || "0",
+                [`G${row}`] : item.tn       || "0",
+                [`H${row}`] : item.chaussee || "0",
+                [`I${row}`] : "0",
+                [`J${row}`] : item.pave     || "0",
+                [`K${row}`] : item.carrelageO|| "0",
+                [`L${row}`] : item.carrelageS|| "0",
+                [`M${row}`] : item.beton    || "0",
+                [`T${row}`] : item.vanne1   || "0",
+                [`U${row}`] : item.vanne2   || "0",
+                [`V${row}`] : item.raccord1 || "0",
+                [`W${row}`] : item.raccord2 || "0",
+                [`X${row}`] : percage==="PVC"?"1":"0",
+                [`Y${row}`] : percage==="FD" ?"1":"0",
+                [`Z${row}`] : percage==="AC" ?"1":"0",
+                [`AA${row}`]: item.pi       || "0"
+            };
+            Object.entries(map).forEach(([cell, val]) => {
+                sheetXml = setCellValue(sheetXml, cell, val);
+            });
+        });
+
+        zip.file(sheetPath, clearFormulaCache(sheetXml));
+
+        const cartoucheSheet = getSheetPath(zip, wbXml, relsXml, "Cartouche");
+        if(cartoucheSheet){
+            let cartXml = await zip.file(cartoucheSheet).async("string");
+            cartXml = setCellValue(cartXml, "C13", nomProjet);
+            zip.file(cartoucheSheet, clearFormulaCache(cartXml));
+        }
+
+        let wbXmlUpdated = wbXml;
+        if(wbXmlUpdated.includes("<calcPr")){
+            wbXmlUpdated = wbXmlUpdated.replace(/<calcPr\b[^/]*/, match => {
+                match = match.replace(/\bfullCalcOnLoad="[^"]*"/, "");
+                match = match.replace(/\bforceFullCalc="[^"]*"/, "");
+                return match.trimEnd() + ` fullCalcOnLoad="1" forceFullCalc="1"`;
+            });
+        }else{
+            wbXmlUpdated = wbXmlUpdated.replace(/<\/workbook>/, `<calcPr fullCalcOnLoad="1" forceFullCalc="1"/></workbook>`);
+        }
+        zip.file("xl/workbook.xml", wbXmlUpdated);
+
+        const blob = await zip.generateAsync({
+            type:"blob",
+            mimeType:"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+            compression:"DEFLATE",
+            compressionOptions:{level:6}
+        });
+        const date = new Date().toISOString().slice(0,10);
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url; a.download = nomProjet+"_"+date+".xlsx"; a.click();
+        URL.revokeObjectURL(url);
+        alert("Fichier généré avec succès");
+    }catch(err){ console.error(err); alert("Erreur : "+err.message); }
+}
+
+/* =====================================
+   HELPER — getSheetPath
+===================================== */
+
+function getSheetPath(zip, wbXml, relsXml, name){
+    const matches = [...wbXml.matchAll(/<sheet\b[^>]*name="([^"]*)"[^>]*r:id="([^"]*)"/g)];
+    let rId = null;
+    matches.forEach(m => { if(m[1].trim()===name) rId = m[2]; });
+    if(!rId) return null;
+    const rel =
+        relsXml.match(new RegExp(`Id="${rId}"[^>]*Target="([^"]*)"`)) ||
+        relsXml.match(new RegExp(`Target="([^"]*)"[^>]*Id="${rId}"`));
+    if(!rel) return null;
+    return "xl/" + rel[1].replace(/^\.\.\//, "");
+}
+
+/* =====================================
+   HELPER — setCellValue
+===================================== */
+
+function setCellValue(xml, addr, value){
+    const rowNum = addr.replace(/[A-Z]+/g, "");
+    const numStr = String(value).trim().replace(",", ".");
+    const isNum  = numStr !== "" && !isNaN(parseFloat(numStr)) && isFinite(numStr);
+    const numVal = isNum ? parseFloat(numStr) : null;
+    const esc    = String(value).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
+
+    const loc = findCell(xml, addr);
+
+    if(loc){
+        const existing  = xml.slice(loc.start, loc.end);
+        const styleMatch= existing.match(/\bs="([^"]*)"/);
+        const styleAttr = styleMatch ? ` s="${styleMatch[1]}"` : "";
+        const newCell   = isNum
+            ? `<c r="${addr}"${styleAttr}><v>${numVal}</v></c>`
+            : `<c r="${addr}"${styleAttr} t="inlineStr"><is><t>${esc}</t></is></c>`;
+
+        if(existing.includes("<f")){
+            let updated = existing;
+            const vVal  = isNum ? String(numVal) : esc;
+            updated = updated.replace(/\bt="[^"]*"/, "");
+            if(!isNum) updated = updated.replace(/^<c\b/, `<c t="str"`);
+            if(/<v>/.test(updated))       updated = updated.replace(/<v>[^<]*<\/v>/, `<v>${vVal}</v>`);
+            else if(/<v\/>/.test(updated)) updated = updated.replace(/<v\/>/, `<v>${vVal}</v>`);
+            else                           updated = updated.replace(/<\/c>/, `<v>${vVal}</v></c>`);
+            return xml.slice(0,loc.start) + updated + xml.slice(loc.end);
+        }
+        return xml.slice(0,loc.start) + newCell + xml.slice(loc.end);
+    }
+
+    const newCell = isNum
+        ? `<c r="${addr}"><v>${numVal}</v></c>`
+        : `<c r="${addr}" t="inlineStr"><is><t>${esc}</t></is></c>`;
+
+    const rowTag = xml.match(new RegExp(`<row\\b[^>]*\\br="${rowNum}"[^>]*>`));
+    if(rowTag){
+        const rowStart  = xml.indexOf(rowTag[0]) + rowTag[0].length;
+        const rowEnd    = xml.indexOf("</row>", rowStart);
+        const colLetter = addr.replace(/\d+/g, "");
+        let insertPos = rowStart, i = rowStart;
+        while(i < rowEnd){
+            const cPos = xml.indexOf("<c ", i);
+            if(cPos===-1 || cPos>=rowEnd) break;
+            const gt = xml.indexOf(">", cPos);
+            const openTag = xml.slice(cPos, gt+1);
+            const refMatch = openTag.match(/\br="([A-Z]+)\d+"/);
+            if(refMatch && colCompare(refMatch[1], colLetter) > 0){ insertPos = cPos; break; }
+            if(openTag.trimEnd().endsWith("/>")){ i = gt+1; }
+            else{ const close = xml.indexOf("</c>", gt); i = close+4; }
+            insertPos = i;
+        }
+        return xml.slice(0,insertPos) + newCell + xml.slice(insertPos);
+    }
+
+    const sd = xml.indexOf("</sheetData>");
+    if(sd !== -1) return xml.slice(0,sd) + `<row r="${rowNum}">${newCell}</row>` + xml.slice(sd);
+    return xml;
+}
+
+/* =====================================
+   HELPER — findCell
+===================================== */
+
+function findCell(xml, addr){
+    let i = 0;
+    while(true){
+        const start = xml.indexOf("<c ", i);
+        if(start===-1) return null;
+        const gt = xml.indexOf(">", start);
+        if(gt===-1) return null;
+        const openTag = xml.slice(start, gt+1);
+        if(new RegExp(`\\br="${addr}"`).test(openTag)){
+            if(openTag.trimEnd().endsWith("/>")) return {start, end:gt+1};
+            const close = xml.indexOf("</c>", gt);
+            if(close===-1) return null;
+            return {start, end:close+4};
+        }
+        i = gt+1;
+    }
+}
+
+/* =====================================
+   HELPER — colCompare
+===================================== */
+
+function colCompare(a, b){
+    if(a.length !== b.length) return a.length - b.length;
+    return a < b ? -1 : a > b ? 1 : 0;
+}
+
+/* =====================================
+   HELPER — clearFormulaCache
+===================================== */
+
+function clearFormulaCache(xml){
+    let result = "", i = 0;
+    while(i < xml.length){
+        const cStart = xml.indexOf("<c ", i);
+        if(cStart===-1){ result += xml.slice(i); break; }
+        result += xml.slice(i, cStart);
+        const gt = xml.indexOf(">", cStart);
+        if(gt===-1){ result += xml.slice(cStart); break; }
+        const openTag = xml.slice(cStart, gt+1);
+        if(openTag.trimEnd().endsWith("/>")){ result += openTag; i = gt+1; continue; }
+        const closePos = xml.indexOf("</c>", gt);
+        if(closePos===-1){ result += xml.slice(cStart); break; }
+        const inner = xml.slice(gt+1, closePos);
+        if(inner.includes("<f")){
+            const cleaned = inner.replace(/<v>[^<]*<\/v>/g,"").replace(/<v\/>/g,"");
+            result += openTag + cleaned + "</c>";
+        }else{
+            result += openTag + inner + "</c>";
+        }
+        i = closePos+4;
+    }
+    return result;
+}
+</script>
+
+</body>
+</html>
