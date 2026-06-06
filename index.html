@@ -3,659 +3,750 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Etude Réseau & Branchements</title>
-
-    <script src="https://cdn.sheetjs.com/xlsx-0.20.2/package/dist/xlsx.full.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
-
-<style>
-*{margin:0;padding:0;box-sizing:border-box;}
-body{font-family:'Segoe UI',Tahoma,sans-serif;background:#f4f7fb;color:#222;}
-
-/* LOGIN */
-.login-container{min-height:100vh;display:flex;justify-content:center;align-items:center;padding:20px;}
-.login-card{width:100%;max-width:450px;background:white;padding:35px;border-radius:20px;box-shadow:0 8px 25px rgba(0,0,0,.12);text-align:center;}
-.logo-login{width:220px;margin-bottom:20px;}
-.login-card h1{color:#0d47c9;margin-bottom:25px;}
-.login-card input{width:100%;padding:14px;margin-bottom:15px;border:1px solid #d7dce5;border-radius:10px;font-size:15px;}
-.login-card button{width:100%;padding:14px;border:none;border-radius:10px;background:#0d47c9;color:white;font-size:16px;font-weight:bold;cursor:pointer;transition:.3s;}
-.login-card button:hover{background:#0838a5;}
-.error{margin-top:15px;padding:10px;background:#fdeaea;color:#c62828;border-radius:8px;}
-.hidden{display:none;}
-
-/* HEADER */
-header{background:white;padding:20px;text-align:center;box-shadow:0 2px 10px rgba(0,0,0,.08);}
-.logo-header{width:240px;max-width:100%;}
-.header-title{margin-top:15px;}
-.header-title h2{color:#0d47c9;font-size:18px;line-height:1.5;}
-
-/* MAIN */
-main{max-width:1300px;margin:auto;padding:20px;}
-.card{background:white;border-radius:18px;padding:20px;margin-bottom:20px;box-shadow:0 2px 10px rgba(0,0,0,.08);}
-.card h3{color:#0d47c9;margin-bottom:20px;}
-.card h4{margin-top:20px;margin-bottom:12px;color:#1e8e3e;}
-label{display:block;font-weight:600;margin-bottom:5px;}
-input[type=text],input[type=number],input[type=file]{width:100%;padding:12px;border:1px solid #d9dfe8;border-radius:10px;margin-bottom:15px;font-size:15px;}
-.radio-group{display:flex;flex-wrap:wrap;gap:15px;background:#f8fafd;padding:12px;border-radius:10px;border:1px solid #e4e8ef;margin-bottom:15px;}
-.radio-group label{margin-bottom:0;}
-
-/* BUTTONS */
-button{cursor:pointer;}
-#btnAdd{width:100%;padding:14px;border:none;border-radius:10px;background:#0d47c9;color:white;font-size:15px;font-weight:bold;}
-#btnGenerateExcel{width:100%;padding:14px;border:none;border-radius:10px;background:#1e8e3e;color:white;font-size:15px;font-weight:bold;}
-#btnGenereExcel{width:100%;padding:14px;border:none;border-radius:10px;background:#6a1b9a;color:white;font-size:15px;font-weight:bold;margin-top:10px;}
-.edit-btn{background:#ff9800;color:white;border:none;padding:8px 10px;border-radius:6px;}
-.delete-btn{background:#d32f2f;color:white;border:none;padding:8px 10px;border-radius:6px;}
-
-/* SUMMARY */
-.summary-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;}
-.summary-grid div{background:#f8fafd;border:1px solid #dfe5ee;border-radius:10px;padding:15px;text-align:center;font-weight:bold;color:#0d47c9;}
-
-/* TABLE */
-table{width:100%;border-collapse:collapse;}
-thead{background:#0d47c9;color:white;}
-th,td{border:1px solid #dbe2ec;padding:8px;text-align:center;}
-tbody tr:nth-child(even){background:#f8fafd;}
-tbody tr:hover{background:#eef4ff;}
-
-/* MOBILE */
-@media(max-width:768px){
-    main{padding:10px;}
-    .header-title h2{font-size:15px;}
-    table{display:block;overflow-x:auto;white-space:nowrap;}
-    th,td{font-size:12px;}
-    .logo-header{width:180px;}
-    .logo-login{width:180px;}
-}
-</style>
+    <title>Calcul des équipements de nœuds de réseaux AEP</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <style>
+        body { background-color: #f4f6f9; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; font-size: 14px; }
+        .card { box-shadow: 0 2px 8px rgba(0,0,0,0.06); border: none; margin-bottom: 15px; border-radius: 8px; padding: 15px !important; }
+        .header-title { background: linear-gradient(135deg, #1e3c72, #2a5298); color: white; padding: 20px 15px; border-radius: 8px; margin-bottom: 20px; }
+        .badge-type { font-size: 0.85rem; padding: 4px 8px; }
+        #loginContainer { max-width: 400px; margin-top: 5%; }
+        .table { font-size: 0.85rem; }
+        .table th, .table td { padding: 8px 4px; }
+       
+        /* Styles pour les logos et en-têtes administratifs */
+        .logo-login { max-width: 140px; height: auto; display: block; margin: 0 auto 10px auto; object-fit: contain; border-radius: 8px; }
+        .logo-header { max-width: 100px; height: auto; object-fit: contain; background-color: rgba(255, 255, 255, 0.9); padding: 5px; border-radius: 8px; }
+        .admin-text { font-size: 0.8rem; font-weight: bold; line-height: 1.3; text-transform: uppercase; letter-spacing: 0.5px; }
+        .admin-text-login { color: #555; }
+        .admin-text-header { color: #e0e6ed; font-size: 0.75rem; }
+ 
+        @media (max-width: 576px) {
+            h2 { font-size: 1.2rem; }
+            h5 { font-size: 1.05rem; }
+            .btn { width: 100%; margin-bottom: 5px; }
+            .btn-group-mobile { display: flex; flex-direction: column; }
+            .logo-login { max-width: 110px; display: block !important; }
+            .logo-header { max-width: 80px; display: block !important; }
+            .admin-text { font-size: 0.75rem; }
+        }
+    </style>
 </head>
-
 <body>
-
-<!-- ================= LOGIN ================= -->
-
-<div id="loginSection" class="login-container">
-    <div class="login-card">
-        <img src="logo.png" class="logo-login">
-        <h1>Connexion</h1>
-        <input type="text" id="loginUser" placeholder="Nom d'utilisateur">
-        <input type="password" id="loginPass" placeholder="Mot de passe">
-        <button id="btnLogin">ACCÉDER</button>
-        <div id="loginError" class="error hidden">Identifiant ou mot de passe incorrect</div>
+ 
+<div id="loginScreen" class="container">
+    <div id="loginContainer" class="card mx-auto p-4 border-top border-primary border-4">
+        <div class="text-center mb-3">
+            <img src="image.png" alt="Logo Application" class="logo-login" onerror="this.src='assets/image.png';">
+            <div class="admin-text admin-text-login mt-2">
+                Direction préfectorale<br>
+                AIN CHOCK HAY HASSANI<br>
+                DEPARTEMENT ETUDE ET TRAVAUX<br>
+                DIVISION EAU POTABLE
+            </div>
+        </div>
+        <hr class="my-3 opacity-25">
+       
+        <h4 class="text-center text-primary mb-4">🔐 Connexion Application AEP</h4>
+        <div id="loginError" class="alert alert-danger d-none small">Identifiant ou mot de passe incorrect.</div>
+        <form id="loginForm" onsubmit="handleLogin(event)">
+            <div class="mb-3">
+                <label class="form-label fw-bold">Identifiant</label>
+                <input type="text" id="username" class="form-control" required autocomplete="username">
+            </div>
+            <div class="mb-3">
+                <label class="form-label fw-bold">Mot de passe</label>
+                <input type="password" id="password" class="form-control" required autocomplete="current-password">
+            </div>
+            <button type="submit" class="btn btn-primary w-100 fw-bold">Se connecter</button>
+        </form>
     </div>
 </div>
-
-<!-- ================= APPLICATION ================= -->
-
-<div id="appSection" class="hidden">
-
-    <header>
-        <img src="logo.png" class="logo-header">
-        <div class="header-title">
-            <h2>DIRECTION PREFECTORALE</h2>
-            <h2>AIN CHOCK HAY HASSANI</h2>
-            <h2>DEPARTEMENT ETUDES ET TRAVAUX</h2>
-            <h2>DIVISION EAU POTABLE</h2>
+ 
+<div id="appScreen" class="container mt-3 d-none">
+    <div class="header-title d-flex align-items-center justify-content-center gap-4 flex-wrap text-center">
+        <div class="d-flex flex-column align-items-center">
+            <img src="image.png" alt="Logo" class="logo-header" onerror="this.src='assets/image.png';">
+            <div class="admin-text admin-text-header mt-2">
+                DP AC HH<br>
+                DET / DEP
+            </div>
         </div>
-    </header>
-
-    <main>
-
-        <!-- FORMULAIRE -->
-        <section class="card">
-            <h3>Informations Tronçon</h3>
-
-            <label>Nom du projet</label>
-            <input type="text" id="nomProjet" placeholder="Nom du projet">
-
-            <label>Nom du tronçon</label>
-            <input type="text" id="troncon">
-
-            <label>Diamètre Nominal</label>
-            <div class="radio-group">
-                <label><input type="radio" name="dn" value="75">75</label>
-                <label><input type="radio" name="dn" value="90">90</label>
-                <label><input type="radio" name="dn" value="110">110</label>
-                <label><input type="radio" name="dn" value="160">160</label>
-                <label><input type="radio" name="dn" value="225">225</label>
-                <label><input type="radio" name="dn" value="315">315</label>
+        <div class="border-start ps-3 d-none d-sm-block" style="border-color: rgba(255,255,255,0.3) !important;">
+            <div class="admin-text text-start text-white opacity-75 mb-2" style="font-size:0.7rem;">
+                Direction préfectorale AIN CHOCK HAY HASSANI<br>
+                DEPARTEMENT ETUDE ET TRAVAUX | DIVISION EAU POTABLE
             </div>
-
-            <h4>Revêtements</h4>
-            <label>TN</label>
-            <input type="number" id="tn" value="">
-            <label>Chaussée</label>
-            <input type="number" id="chaussee" value="">
-            <label>Pavé</label>
-            <input type="number" id="pave" value="">
-            <label>Carrelage O</label>
-            <input type="number" id="carrelageO" value="">
-            <label>Carrelage S</label>
-            <input type="number" id="carrelageS" value="">
-            <label>Béton</label>
-            <input type="number" id="beton" value="">
-
-            <h4>Vannes & Raccordements</h4>
-            <label>Vanne &lt;= 150</label>
-            <input type="number" id="vanne1" value="">
-            <label>Vanne &gt;150 &lt;=300</label>
-            <input type="number" id="vanne2" value="">
-            <label>Raccordement &lt;=200</label>
-            <input type="number" id="raccord1" value="">
-            <label>Raccordement &gt;200 &lt;=300</label>
-            <input type="number" id="raccord2" value="">
-
-            <h4>Perçage</h4>
-            <div class="radio-group">
-                <label><input type="radio" name="percage" value="PVC">PVC</label>
-                <label><input type="radio" name="percage" value="FD">FD</label>
-                <label><input type="radio" name="percage" value="AC">AC</label>
+            <h2 class="mb-0 text-start">Liste des matériels & des Équipements AEP</h2>
+        </div>
+        <div class="d-block d-sm-none">
+            <h2 class="mb-0">Liste des matériels & Équipements AEP</h2>
+        </div>
+    </div>
+ 
+    <div class="card border-primary" id="uploadCard">
+        <h5 class="card-title text-primary mb-2">📁 Fichier de Référence (Base de données)</h5>
+        <div id="dbStatusMessage" class="alert alert-info py-2 small mb-2">Vérification de la base de données locale...</div>
+        <div id="uploadInputContainer" class="d-none">
+            <p class="text-muted small mb-2">Sélectionnez le fichier <code class="fw-bold">NOEUD TYPE3.xlsx</code> pour l'enregistrer définitivement.</p>
+            <input type="file" class="form-control form-control-sm" id="excelRefFile" accept=".xlsx, .xls, .csv" onchange="handleRefExcel(event)">
+        </div>
+        <div id="dbActions" class="d-none mt-1">
+            <button class="btn btn-sm btn-outline-danger py-1" onclick="clearLocalDB()">🔄 Changer / Mettre à jour le fichier Excel</button>
+        </div>
+        <div id="uploadError" class="mt-2 text-danger fw-bold small d-none">❌ Erreur de structure (colonnes Noeud, Source, Projete manquantes ou deuxième feuille introuvable).</div>
+    </div>
+ 
+    <div id="mainAppContent" style="opacity: 0.2; pointer-events: none; transition: all 0.3s ease;">
+       
+        <div class="card border-start border-info border-4">
+            <h5 class="card-title text-info mb-3">📋 Informations Générales du Projet</h5>
+            <div class="row g-2">
+                <div class="col-12 col-sm-6">
+                    <label class="form-label fw-bold mb-1">Nom du projet</label>
+                    <input type="text" id="projectName" class="form-control form-control-sm" placeholder="Ex: Renouvellement Secteur...">
+                </div>
+                <div class="col-6 col-sm-3">
+                    <label class="form-label fw-bold mb-1">Commune</label>
+                    <select id="projectCommune" class="form-select form-select-sm">
+                        <option value="" selected disabled>Choisir...</option>
+                        <option value="AC">Aïn Chock (AC)</option>
+                        <option value="HH">Hay Hassani (HH)</option>
+                    </select>
+                </div>
+                <div class="col-6 col-sm-3">
+                    <label class="form-label fw-bold mb-1">Date</label>
+                    <input type="date" id="projectDate" class="form-control form-control-sm">
+                </div>
             </div>
+        </div>
+ 
+        <div class="card">
+            <h5 class="card-title text-primary mb-3">➕ Ajouter un nœود</h5>
+            <form id="nodeForm" class="row g-2" onsubmit="addNodeRow(event)">
+                <div class="col-6 col-md-3">
+                    <label class="form-label fw-bold mb-1">Type de nœud</label>
+                    <select id="nodeType" class="form-select form-select-sm" onchange="toggleInputsBasedOnType()" required>
+                        <option value="" selected disabled>Choisir...</option>
+                        <option value="N">N (Nœud normal)</option>
+                        <option value="VC">VC (Vanne Cheval)</option>
+                        <option value="PI">PI (Poteau Incendie)</option>
+                        <option value="RN">RN (Raccordement Normal)</option>
+                        <option value="R">R (Raccordement)</option>
+                    </select>
+                </div>
+                <div class="col-6 col-md-3">
+                    <label class="form-label fw-bold mb-1">Numéro / Index</label>
+                    <input type="text" id="nodeNumber" class="form-control form-control-sm" placeholder="Ex: 1, 2, A..." required>
+                </div>
+                <div class="col-6 col-md-3">
+                    <label class="form-label fw-bold mb-1">Conduite Source</label>
+                    <select id="nodeSource" class="form-select form-select-sm" required>
+                        <option value="" selected disabled>Diamètre...</option>
+                    </select>
+                </div>
+                <div class="col-6 col-md-3">
+                    <label class="form-label fw-bold mb-1">Conduite Projetée</label>
+                    <select id="nodeProj" class="form-select form-select-sm" required>
+                        <option value="" selected disabled>Diamètre...</option>
+                    </select>
+                </div>
+                <div class="col-12 mt-3">
+                    <button type="submit" class="btn btn-primary btn-sm fw-bold w-100">➕ Insérer à la liste</button>
+                </div>
+            </form>
+        </div>
 
-            <label>PI</label>
-            <input type="number" id="pi" value="">
-
-            <button id="btnAdd">Ajouter / Modifier</button>
-        </section>
-
-        <!-- EXCEL -->
-        <section class="card">
-            <h3>Modèle Excel</h3>
-            <input type="file" id="excelTemplate" accept=".xlsx">
-            <button id="btnGenerateExcel">Générer le fichier étude</button>
-            <button id="btnGenereExcel">Générer EXCEL</button>
-        </section>
-
-        <!-- RESUME -->
-        <section class="card">
-            <h3>Longueurs Totales par DN</h3>
-            <div class="summary-grid">
-                <div id="sum75">DN75 : 0</div>
-                <div id="sum90">DN90 : 0</div>
-                <div id="sum110">DN110 : 0</div>
-                <div id="sum160">DN160 : 0</div>
-                <div id="sum225">DN225 : 0</div>
-                <div id="sum315">DN315 : 0</div>
+        <div class="card border-start border-success border-4">
+            <h5 class="card-title text-success mb-3">➕ Ajouter conduites PVC</h5>
+            <form id="pvcForm" class="row g-2" onsubmit="addPvcRow(event)">
+                <div class="col-12 col-md-6">
+                    <label class="form-label fw-bold mb-1">Diamètre Nominal (DN)</label>
+                    <select id="pvcDiameter" class="form-select form-select-sm" required>
+                        <option value="" selected disabled>Choisir le diamètre...</option>
+                        <option value="75">75 mm</option>
+                        <option value="90">90 mm</option>
+                        <option value="110">110 mm</option>
+                        <option value="160">160 mm</option>
+                        <option value="225">225 mm</option>
+                        <option value="315">315 mm</option>
+                    </select>
+                </div>
+                <div class="col-12 col-md-6">
+                    <label class="form-label fw-bold mb-1">Longueur de la conduite (m)</label>
+                    <input type="number" step="any" id="pvcLength" class="form-control form-control-sm" placeholder="Ex: 150, 45.5..." required min="0.01">
+                </div>
+                <div class="col-12 mt-3">
+                    <button type="submit" class="btn btn-success btn-sm fw-bold w-100">➕ Insérer la conduite</button>
+                </div>
+            </form>
+        </div>
+ 
+        <div class="mb-3 btn-group-mobile text-end">
+            <button class="btn btn-sm btn-outline-secondary me-md-1" onclick="saveProject()">💾 Sauver Projet</button>
+            <input type="file" id="importFile" style="display:none" onchange="importProject(event)">
+            <button class="btn btn-sm btn-outline-secondary" onclick="document.getElementById('importFile').click()">📂 Ouvrir Projet</button>
+        </div>
+ 
+        <div class="card">
+            <h5 class="card-title text-secondary mb-2">📋 Liste des éléments saisis</h5>
+            <div class="table-responsive">
+                <table class="table table-striped table-hover text-center align-middle mb-0" id="saisieTable">
+                    <thead class="table-dark">
+                        <tr>
+                            <th>Élément / Nœud</th>
+                            <th>Source / Diamètre PVC</th>
+                            <th>Projeté / Longueur (m)</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td colspan="4" class="text-muted text-center py-3">Aucun élément saisi.</td>
+                        </tr>
+                    </tbody>
+                </table>
             </div>
-        </section>
-
-        <!-- TABLEAU -->
-        <section class="card">
-            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;">
-                <h3 style="margin-bottom:0;">Liste des Tronçons</h3>
-                <button onclick="supprimerTous()" style="background:#d32f2f;color:white;border:none;padding:9px 16px;border-radius:8px;font-weight:bold;">Supprimer tous</button>
+            <div class="mt-3">
+                <button class="btn btn-success fw-bold w-100" onclick="calculateEquipments()">🔄 Lancer le Calcul Cumulé</button>
             </div>
-            <table id="tronconTable">
-                <thead>
-                    <tr>
-                        <th>Tronçon</th><th>DN</th><th>TN</th><th>Chaussée</th>
-                        <th>Pavé</th><th>Car.O</th><th>Car.S</th><th>Béton</th>
-                        <th>V&lt;=150</th><th>V&gt;150</th><th>R&lt;=200</th><th>R&gt;200</th>
-                        <th>Perçage</th><th>PI</th><th>Modifier</th><th>Supprimer</th>
-                    </tr>
-                </thead>
-                <tbody></tbody>
-            </table>
-        </section>
-
-    </main>
+        </div>
+ 
+        <div class="card d-none" id="resultCard">
+            <div class="d-flex flex-column mb-3">
+                <h5 class="card-title text-success fw-bold mb-2">📊 Quantités Totales Requises</h5>
+                <button onclick="exportToExcel()" class="btn btn-sm btn-outline-success fw-bold w-100">📥 Exporter vers Excel (.xlsx)</button>
+            </div>
+            <div class="table-responsive">
+                <table class="table table-bordered text-center align-middle mb-0" id="resultTable">
+                    <thead class="table-light">
+                        <tr>
+                            <th>N° Article</th>
+                            <th class="text-start">Désignation Équipement / Conduite</th>
+                            <th>Quantité (U / m)</th>
+                            <th>Prix Unitaire (DH)</th>
+                            <th>Montant Total (DH)</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                    <tfoot class="table-secondary fw-bold text-primary">
+                        <tr>
+                            <td colspan="4" class="text-end text-uppercase fs-6">Total Général :</td>
+                            <td id="totalGeneralCell" class="fs-6">-</td>
+                        </tr>
+                    </tfoot>
+                </table>
+           </div>
+        </div>
+    </div>
 </div>
-
+ 
 <script>
-/* ==========================
-   CONFIGURATION
-========================== */
-
-const USERNAME = "Asaber";
-const PASSWORD = "Al@e16Lokmn23";
-
-let editIndex = -1;
-
-/* ==========================
-   INITIALISATION
-========================== */
-
-document.addEventListener("DOMContentLoaded", () => {
-    document.getElementById("loginUser").value = USERNAME;
-    document.getElementById("loginPass").value = PASSWORD;
-    document.getElementById("btnLogin").addEventListener("click", login);
-    document.getElementById("btnAdd").addEventListener("click", addOrUpdateTroncon);
-    document.getElementById("btnGenerateExcel").addEventListener("click", generateExcel);
-    document.getElementById("btnGenereExcel").addEventListener("click", genereExcel);
-    loadData();
-    updateSummary();
-});
-
-/* ==========================
-   LOGIN
-========================== */
-
-function login(){
-    const user = document.getElementById("loginUser").value.trim();
-    const pass = document.getElementById("loginPass").value.trim();
-    if(user === USERNAME && pass === PASSWORD){
-        document.getElementById("loginSection").classList.add("hidden");
-        document.getElementById("appSection").classList.remove("hidden");
-    }else{
-        document.getElementById("loginError").classList.remove("hidden");
+    let dbReference = [];
+    let dbArticlesPrice = []; 
+    let tempRows = [];   
+    let finalResults = [];
+    let totalGeneralGlobal = 0;
+ 
+    document.getElementById('projectDate').valueAsDate = new Date();
+ 
+    function handleLogin(e) {
+        e.preventDefault();
+        const user = document.getElementById('username').value;
+        const pass = document.getElementById('password').value;
+ 
+        if (user === "asaber" && pass === "Al@e16Lokmn23") {
+            document.getElementById('loginScreen').classList.add('d-none');
+            document.getElementById('appScreen').classList.remove('d-none');
+            checkLocalDatabase();
+        } else {
+            const errDiv = document.getElementById('loginError');
+            errDiv.classList.remove('d-none');
+            setTimeout(() => errDiv.classList.add('d-none'), 4000);
+        }
     }
-}
-
-/* ==========================
-   AJOUT / MODIFICATION
-========================== */
-
-function addOrUpdateTroncon(){
-    const troncon = document.getElementById("troncon").value.trim();
-    if(troncon === ""){ alert("Nom du tronçon obligatoire"); return; }
-    const dnRadio = document.querySelector('input[name="dn"]:checked');
-    if(!dnRadio){ alert("Choisir un DN"); return; }
-    const data = {
-        troncon,
-        dn        : dnRadio.value,
-        tn        : document.getElementById("tn").value || 0,
-        chaussee  : document.getElementById("chaussee").value || 0,
-        pave      : document.getElementById("pave").value || 0,
-        carrelageO: document.getElementById("carrelageO").value || 0,
-        carrelageS: document.getElementById("carrelageS").value || 0,
-        beton     : document.getElementById("beton").value || 0,
-        vanne1    : document.getElementById("vanne1").value || 0,
-        vanne2    : document.getElementById("vanne2").value || 0,
-        raccord1  : document.getElementById("raccord1").value || 0,
-        raccord2  : document.getElementById("raccord2").value || 0,
-        percage   : document.querySelector('input[name="percage"]:checked')?.value || "",
-        pi        : document.getElementById("pi").value || 0
-    };
-    let troncons = JSON.parse(localStorage.getItem("troncons")) || [];
-    if(editIndex === -1){ troncons.push(data); }
-    else{ troncons[editIndex] = data; editIndex = -1; }
-    localStorage.setItem("troncons", JSON.stringify(troncons));
-    renderTable();
-    resetForm();
-    updateSummary();
-}
-
-/* ==========================
-   AFFICHAGE TABLEAU
-========================== */
-
-function renderTable(){
-    const tbody = document.querySelector("#tronconTable tbody");
-    tbody.innerHTML = "";
-    const troncons = JSON.parse(localStorage.getItem("troncons")) || [];
-    troncons.forEach((item, index) => {
-        const row = document.createElement("tr");
-        row.innerHTML = `
-            <td>${item.troncon}</td><td>${item.dn}</td><td>${item.tn}</td>
-            <td>${item.chaussee}</td><td>${item.pave}</td><td>${item.carrelageO}</td>
-            <td>${item.carrelageS}</td><td>${item.beton}</td><td>${item.vanne1}</td>
-            <td>${item.vanne2}</td><td>${item.raccord1}</td><td>${item.raccord2}</td>
-            <td>${item.percage}</td><td>${item.pi}</td>
-            <td><button class="edit-btn" onclick="editTroncon(${index})">Modifier</button></td>
-            <td><button class="delete-btn" onclick="deleteTroncon(${index})">Supprimer</button></td>`;
-        tbody.appendChild(row);
-    });
-}
-
-/* ==========================
-   MODIFIER
-========================== */
-
-function editTroncon(index){
-    const troncons = JSON.parse(localStorage.getItem("troncons")) || [];
-    const item = troncons[index];
-    editIndex = index;
-    document.getElementById("troncon").value = item.troncon;
-    document.querySelector(`input[name="dn"][value="${item.dn}"]`).checked = true;
-    document.getElementById("tn").value        = item.tn;
-    document.getElementById("chaussee").value  = item.chaussee;
-    document.getElementById("pave").value      = item.pave;
-    document.getElementById("carrelageO").value= item.carrelageO;
-    document.getElementById("carrelageS").value= item.carrelageS;
-    document.getElementById("beton").value     = item.beton;
-    document.getElementById("vanne1").value    = item.vanne1;
-    document.getElementById("vanne2").value    = item.vanne2;
-    document.getElementById("raccord1").value  = item.raccord1;
-    document.getElementById("raccord2").value  = item.raccord2;
-    if(item.percage){
-        document.querySelector(`input[name="percage"][value="${item.percage}"]`).checked = true;
+ 
+    function checkLocalDatabase() {
+        const localData = localStorage.getItem('aep_db_reference');
+        const localArticles = localStorage.getItem('aep_db_articles');
+        const msgDiv = document.getElementById('dbStatusMessage');
+       
+        if (localData) {
+            try {
+                dbReference = JSON.parse(localData);
+                dbArticlesPrice = localArticles ? JSON.parse(localArticles) : [];
+                msgDiv.className = "alert alert-success py-2 small mb-1";
+                msgDiv.innerHTML = "✅ Base de données Excel chargée en local.";
+                document.getElementById('uploadInputContainer').classList.add('d-none');
+                document.getElementById('dbActions').classList.remove('d-none');
+                populateDropdowns();
+                activateMainApp();
+            } catch(e) {
+                clearLocalDB();
+            }
+        } else {
+            msgDiv.className = "alert alert-warning py-2 small mb-1";
+            msgDiv.innerHTML = "⚠️ Aucune base de données en mémoire. Veuillez charger le fichier Excel.";
+            document.getElementById('uploadInputContainer').classList.remove('d-none');
+            document.getElementById('dbActions').classList.add('d-none');
+            deactivateMainApp();
+        }
     }
-    document.getElementById("pi").value = item.pi;
-    window.scrollTo({ top:0, behavior:"smooth" });
-}
-
-/* ==========================
-   SUPPRIMER
-========================== */
-
-function supprimerTous(){
-    if(!confirm("Supprimer tous les tronçons ?")) return;
-    localStorage.removeItem("troncons");
-    renderTable();
-    updateSummary();
-}
-
-function deleteTroncon(index){
-    if(!confirm("Supprimer ce tronçon ?")) return;
-    let troncons = JSON.parse(localStorage.getItem("troncons")) || [];
-    troncons.splice(index, 1);
-    localStorage.setItem("troncons", JSON.stringify(troncons));
-    renderTable();
-    updateSummary();
-}
-
-/* ==========================
-   RESET FORM
-========================== */
-
-function resetForm(){
-    document.getElementById("troncon").value = "";
-    ["tn","chaussee","pave","carrelageO","carrelageS","beton","vanne1","vanne2","raccord1","raccord2","pi"]
-        .forEach(id => document.getElementById(id).value = 0);
-    document.querySelectorAll('input[name="dn"]').forEach(r => r.checked = false);
-    document.querySelectorAll('input[name="percage"]').forEach(r => r.checked = false);
-}
-
-function loadData(){ renderTable(); }
-
-/* ==========================
-   SUMMARY DN
-========================== */
-
-function updateSummary(){
-    let sums = {75:0,90:0,110:0,160:0,225:0,315:0};
-    const troncons = JSON.parse(localStorage.getItem("troncons")) || [];
-    troncons.forEach(item => {
-        sums[item.dn] += Number(item.tn)+Number(item.chaussee)+Number(item.pave)+Number(item.carrelageO)+Number(item.carrelageS)+Number(item.beton);
-    });
-    document.getElementById("sum75").innerText  = "DN75 : "  + sums[75]  + " m";
-    document.getElementById("sum90").innerText  = "DN90 : "  + sums[90]  + " m";
-    document.getElementById("sum110").innerText = "DN110 : " + sums[110] + " m";
-    document.getElementById("sum160").innerText = "DN160 : " + sums[160] + " m";
-    document.getElementById("sum225").innerText = "DN225 : " + sums[225] + " m";
-    document.getElementById("sum315").innerText = "DN315 : " + sums[315] + " m";
-}
-
-/* =====================================
-   GENERATE EXCEL (SheetJS)
-===================================== */
-
-async function generateExcel(){
-    const fileInput = document.getElementById("excelTemplate");
-    if(!fileInput.files.length){ alert("Veuillez sélectionner le modèle Excel"); return; }
-    const troncons = JSON.parse(localStorage.getItem("troncons")) || [];
-    if(troncons.length === 0){ alert("Aucun tronçon à exporter"); return; }
-    try{
-        const arrayBuffer = await fileInput.files[0].arrayBuffer();
-        const workbook = XLSX.read(arrayBuffer,{type:"array",cellStyles:true,cellFormula:true,cellNF:true,cellDates:true});
-        let sheetName = null;
-        workbook.SheetNames.forEach(name => { if(name.trim()==="Données de base Réseau") sheetName = name; });
-        if(!sheetName){ alert("Feuille 'Données de base Réseau' introuvable"); return; }
-        const sheet = workbook.Sheets[sheetName];
-        let row = 3;
-        troncons.forEach(item => {
-            writeCell(sheet,"A"+row,item.troncon);
-            writeCell(sheet,"B"+row,Number(item.dn));
-            writeCell(sheet,"G"+row,Number(item.tn));
-            writeCell(sheet,"H"+row,Number(item.chaussee));
-            writeCell(sheet,"J"+row,Number(item.pave));
-            writeCell(sheet,"K"+row,Number(item.carrelageO));
-            writeCell(sheet,"L"+row,Number(item.carrelageS));
-            writeCell(sheet,"M"+row,Number(item.beton));
-            writeCell(sheet,"T"+row,Number(item.vanne1));
-            writeCell(sheet,"U"+row,Number(item.vanne2));
-            writeCell(sheet,"V"+row,Number(item.raccord1));
-            writeCell(sheet,"W"+row,Number(item.raccord2));
-            writeCell(sheet,"X"+row,item.percage==="PVC"?1:0);
-            writeCell(sheet,"Y"+row,item.percage==="FD"?1:0);
-            writeCell(sheet,"Z"+row,item.percage==="AC"?1:0);
-            writeCell(sheet,"AA"+row,Number(item.pi));
-            row++;
+ 
+    function clearLocalDB() {
+        localStorage.removeItem('aep_db_reference');
+        localStorage.removeItem('aep_db_articles');
+        dbReference = [];
+        dbArticlesPrice = [];
+        checkLocalDatabase();
+    }
+ 
+    let style = document.getElementById('mainAppContent').style;
+    function activateMainApp() {
+        style.opacity = "1";
+        style.pointerEvents = "auto";
+    }
+ 
+    function deactivateMainApp() {
+        style.opacity = "0.2";
+        style.pointerEvents = "none";
+    }
+ 
+    function handleRefExcel(e) {
+        const file = e.target.files[0];
+        if (!file) return;
+        document.getElementById('uploadError').classList.add('d-none');
+ 
+        const reader = new FileReader();
+        reader.onload = function(evt) {
+            try {
+                const data = evt.target.result;
+                const workbook = XLSX.read(data, { type: 'binary' });
+                
+                const firstSheetName = workbook.SheetNames[0];
+                const worksheet = workbook.Sheets[firstSheetName];
+                const jsonRows = XLSX.utils.sheet_to_json(worksheet, { defval: "" });
+               
+                if(jsonRows.length === 0) throw new Error("Vide");
+ 
+                let cleanedData = jsonRows.map(row => {
+                    let cleanedRow = {};
+                    for (let key in row) {
+                        let cleanKey = key.trim();
+                        if (cleanKey === "Nœud" || cleanKey === "Noeud") cleanKey = "Noeud";
+                        if (cleanKey === "Conduite source") cleanKey = "Source";
+                        if (cleanKey === "Conduite projeté" || cleanKey === "Conduite projetée") cleanKey = "Projete";
+                        cleanedRow[cleanKey] = row[key];
+                    }
+                    return cleanedRow;
+                });
+ 
+                if (!cleanedData[0].hasOwnProperty('Noeud')) {
+                    throw new Error("Champs invalides");
+                }
+ 
+                let cleanedArticles = [];
+                if (workbook.SheetNames.length > 1) {
+                    const secondSheetName = workbook.SheetNames[1];
+                    const secondWorksheet = workbook.Sheets[secondSheetName];
+                    const jsonArticles = XLSX.utils.sheet_to_json(secondWorksheet, { defval: "" });
+                    
+                    cleanedArticles = jsonArticles.map(row => {
+                        let cleanedRow = {};
+                        for (let key in row) {
+                            let cleanKey = key.trim();
+                            cleanedRow[cleanKey] = String(row[key]).trim();
+                        }
+                        return cleanedRow;
+                    });
+                }
+ 
+                localStorage.setItem('aep_db_reference', JSON.stringify(cleanedData));
+                localStorage.setItem('aep_db_articles', JSON.stringify(cleanedArticles));
+                checkLocalDatabase();
+            } catch (err) {
+                console.error(err);
+                document.getElementById('uploadError').classList.remove('d-none');
+            }
+        };
+        reader.readAsBinaryString(file);
+    }
+ 
+    function populateDropdowns() {
+        const sources = [...new Set(dbReference.map(r => String(r['Source']).trim()).filter(s => s !== "" && s !== "undefined"))].sort((a,b) => parseFloat(a)-parseFloat(b));
+        const projets = [...new Set(dbReference.map(r => String(r['Projete']).trim()).filter(p => p !== "" && p !== "undefined"))].sort((a,b) => parseFloat(a)-parseFloat(b));
+        buildSelectOptions('nodeSource', sources);
+        buildSelectOptions('nodeProj', projets);
+    }
+ 
+    function buildSelectOptions(elementId, list) {
+        const select = document.getElementById(elementId);
+        select.innerHTML = '<option value="" selected disabled>Filtre...</option>';
+        list.forEach(item => {
+            if (item && item !== "undefined" && item !== "null") {
+                select.innerHTML += `<option value="${item}">${item} mm</option>`;
+            }
         });
-        workbook.Workbook = workbook.Workbook || {};
-        workbook.Workbook.CalcPr = {calcMode:"auto",fullCalcOnLoad:true,forceFullCalc:true};
-        const date = new Date().toISOString().slice(0,10);
-        XLSX.writeFile(workbook,"Etude_Reseau_"+date+".xlsx");
-        alert("Fichier généré avec succès");
-    }catch(error){ console.error(error); alert("Erreur lors de la génération du fichier"); }
-}
+    }
+ 
+    function toggleInputsBasedOnType() {
+        const type = document.getElementById('nodeType').value;
+        const sourceSelect = document.getElementById('nodeSource');
+        const projSelect = document.getElementById('nodeProj');
+        
+        if (type === "VC" || type === "PI") {
+            sourceSelect.removeAttribute('required');
+            sourceSelect.value = ""; 
+            sourceSelect.setAttribute('disabled', 'disabled'); 
+            
+            projSelect.setAttribute('required', 'required');
+            projSelect.removeAttribute('disabled');
+        } else if (type === "R") {
+            projSelect.removeAttribute('required');
+            projSelect.value = ""; 
+            projSelect.setAttribute('disabled', 'disabled'); 
+            
+            sourceSelect.setAttribute('required', 'required');
+            sourceSelect.removeAttribute('disabled');
+        } else {
+            sourceSelect.setAttribute('required', 'required');
+            sourceSelect.removeAttribute('disabled'); 
+            
+            projSelect.setAttribute('required', 'required');
+            projSelect.removeAttribute('disabled');
+        }
+    }
+ 
+    function addNodeRow(e) {
+        e.preventDefault();
+        const typeBase = document.getElementById('nodeType').value;
+        const userNumber = document.getElementById('nodeNumber').value.trim(); 
+        const source = document.getElementById('nodeSource').value;
+        const proj = document.getElementById('nodeProj').value;
+        
+        const nodeCustomLabel = typeBase + userNumber;
+ 
+        tempRows.push({ entryType: 'node', type: nodeCustomLabel, baseType: typeBase, userNum: userNumber, source, proj });
+        renderSaisieTable();
+        document.getElementById('nodeForm').reset();
+        toggleInputsBasedOnType(); 
+    }
 
-function writeCell(sheet, address, value){
-    sheet[address] = typeof value==="number" ? {t:"n",v:value} : {t:"s",v:value};
-}
+    function addPvcRow(e) {
+        e.preventDefault();
+        const diameter = document.getElementById('pvcDiameter').value;
+        const length = document.getElementById('pvcLength').value.trim();
 
-/* =====================================
-   GENERE EXCEL — ZIP DIRECT
-===================================== */
+        tempRows.push({ entryType: 'pvc', type: 'PVC DN' + diameter, baseType: 'PVC', userNum: '', source: diameter, proj: length });
+        renderSaisieTable();
+        document.getElementById('pvcForm').reset();
+    }
+ 
+    function renderSaisieTable() {
+        const tbody = document.querySelector('#saisieTable tbody');
+        if (tempRows.length === 0) {
+            tbody.innerHTML = `<tr><td colspan="4" class="text-muted text-center py-3">Aucun élément saisi.</td></tr>`;
+            return;
+        }
+        tbody.innerHTML = '';
+        tempRows.forEach((row, index) => {
+            const isNode = row.entryType === 'node';
+            const badgeClass = isNode ? 'bg-primary' : 'bg-success';
+            const sourceDisplay = isNode ? (row.source ? row.source + ' mm' : '-') : (row.source + ' mm');
+            const projDisplay = isNode ? (row.proj ? row.proj + ' mm' : '-') : (row.proj + ' m');
 
-async function genereExcel(){
-    const fileInput = document.getElementById("excelTemplate");
-    if(!fileInput.files.length){ alert("Veuillez sélectionner le modèle Excel"); return; }
-    try{
-        const nomProjet = document.getElementById("nomProjet").value.trim() || "Genere_Excel";
-        const arrayBuffer = await fileInput.files[0].arrayBuffer();
-        const zip = await JSZip.loadAsync(arrayBuffer);
+            tbody.innerHTML += `
+                <tr>
+                    <td><span class="badge ${badgeClass} badge-type">${row.type}</span></td>
+                    <td>${sourceDisplay}</td>
+                    <td>${projDisplay}</td>
+                    <td>
+                        <div class="d-flex justify-content-center gap-1">
+                            <button class="btn btn-sm btn-warning py-0 px-2" onclick="editRow(${index})">📝</button>
+                            <button class="btn btn-sm btn-danger py-0 px-2" onclick="deleteRow(${index})">❌</button>
+                        </div>
+                    </td>
+                </tr>`;
+        });
+    }
+ 
+    function deleteRow(index) {
+        tempRows.splice(index, 1);
+        renderSaisieTable();
+    }
+ 
+    function editRow(index) {
+        const row = tempRows[index];
+        if (row.entryType === 'pvc') {
+            document.getElementById('pvcDiameter').value = row.source;
+            document.getElementById('pvcLength').value = row.proj;
+        } else {
+            document.getElementById('nodeType').value = row.baseType;
+            toggleInputsBasedOnType();
+            setTimeout(() => {
+                document.getElementById('nodeNumber').value = row.userNum; 
+                document.getElementById('nodeSource').value = row.source;
+                document.getElementById('nodeProj').value = row.proj;
+            }, 100);
+        }
+        deleteRow(index);
+    }
+ 
+    function calculateEquipments() {
+        if (tempRows.length === 0) {
+            alert('Veuillez ajouter au moins un élément !');
+            return;
+        }
+        let summary = {};
+        let pvcSummary = {}; 
+        let totalPvcLength = 0; 
+ 
+        const sampleRow = dbReference[0] || {};
+        const equipmentCols = Object.keys(sampleRow).filter(k => k !== 'Noeud' && k !== 'Source' && k !== 'Projete');
+ 
+        tempRows.forEach(row => {
+            if (row.entryType === 'pvc') {
+                const dnKey = row.source; // تخزين القطر فقط كمفتاح (مثال: "75")
+                const len = parseFloat(row.proj);
+                if (!isNaN(len)) {
+                    pvcSummary[dnKey] = (pvcSummary[dnKey] || 0) + len;
+                    totalPvcLength += len; 
+                }
+                return; 
+            }
+            
+            const match = dbReference.find(r => {
+                const excelNodeType = String(r['Noeud']).trim().toUpperCase();
+                
+                let isTypeMatch = false;
+                if (row.baseType === "RN") {
+                    isTypeMatch = excelNodeType.startsWith("RN");
+                } else if (row.baseType === "R") {
+                    isTypeMatch = excelNodeType.startsWith("R") && !excelNodeType.startsWith("RN");
+                } else {
+                    isTypeMatch = excelNodeType.startsWith(row.baseType.toUpperCase());
+                }
 
-        const wbXml   = await zip.file("xl/workbook.xml").async("string");
-        const relsXml = await zip.file("xl/_rels/workbook.xml.rels").async("string");
+                const excelSrc = r['Source'] ? String(r['Source']).trim() : "";
+                const excelPrj = r['Projete'] ? String(r['Projete']).trim() : "";
+                
+                if (row.baseType === "VC" || row.baseType === "PI") {
+                    return isTypeMatch && (excelPrj === String(row.proj).trim());
+                } else if (row.baseType === "R") {
+                    return isTypeMatch && (excelSrc === String(row.source).trim());
+                } else {
+                    return isTypeMatch && (excelSrc === String(row.source).trim()) && (excelPrj === String(row.proj).trim());
+                }
+            });
+            if (match) {
+                equipmentCols.forEach(col => {
+                    const value = parseFloat(match[col]);
+                    if (!isNaN(value) && value > 0) summary[col] = (summary[col] || 0) + value;
+                });
+            }
+        });
+ 
+        totalGeneralGlobal = 0;
+        finalResults = [];
 
-        const sheetMatches = [...wbXml.matchAll(/<sheet\b[^>]*name="([^"]*)"[^>]*r:id="([^"]*)"/g)];
-        let rId = null;
-        sheetMatches.forEach(m => { if(m[1].trim()==="Données de base Réseau") rId = m[2]; });
-        if(!rId){ alert("Feuille 'Données de base Réseau' introuvable"); return; }
+        // 1. معالجة حسابات العقد والإكسسوارات
+        Object.keys(summary).forEach(key => {
+            const searchKeyClean = key.trim().toUpperCase().replace(/\s+/g, ' ');
+            
+            const artMatch = dbArticlesPrice.find(a => {
+                if (!a['DESIGNATION']) return false;
+                const dbDesigClean = String(a['DESIGNATION']).trim().toUpperCase().replace(/\s+/g, ' ');
+                return dbDesigClean === searchKeyClean;
+            });
 
-        const relMatch =
-            relsXml.match(new RegExp(`Id="${rId}"[^>]*Target="([^"]*)"`)) ||
-            relsXml.match(new RegExp(`Target="([^"]*)"[^>]*Id="${rId}"`));
-        if(!relMatch){ alert("Relation de la feuille introuvable"); return; }
-
-        const sheetPath = "xl/" + relMatch[1].replace(/^\.\.\//, "");
-        let sheetXml = await zip.file(sheetPath).async("string");
-
-        const troncons = JSON.parse(localStorage.getItem("troncons")) || [];
-        if(troncons.length === 0){ alert("Aucun tronçon dans la liste"); return; }
-
-        troncons.forEach((item, index) => {
-            const row = 3 + index;
-            const percage = item.percage || "";
-            const map = {
-                [`A${row}`] : item.troncon,
-                [`B${row}`] : item.dn       || "0",
-                [`G${row}`] : item.tn       || "0",
-                [`H${row}`] : item.chaussee || "0",
-                [`I${row}`] : "0",
-                [`J${row}`] : item.pave     || "0",
-                [`K${row}`] : item.carrelageO|| "0",
-                [`L${row}`] : item.carrelageS|| "0",
-                [`M${row}`] : item.beton    || "0",
-                [`T${row}`] : item.vanne1   || "0",
-                [`U${row}`] : item.vanne2   || "0",
-                [`V${row}`] : item.raccord1 || "0",
-                [`W${row}`] : item.raccord2 || "0",
-                [`X${row}`] : percage==="PVC"?"1":"0",
-                [`Y${row}`] : percage==="FD" ?"1":"0",
-                [`Z${row}`] : percage==="AC" ?"1":"0",
-                [`AA${row}`]: item.pi       || "0"
-            };
-            Object.entries(map).forEach(([cell, val]) => {
-                sheetXml = setCellValue(sheetXml, cell, val);
+            const qty = summary[key];
+            const unitPrice = artMatch ? parseFloat(artMatch['PRIX']) : 0;
+            const montant = !isNaN(unitPrice) ? (qty * unitPrice) : 0;
+            
+            totalGeneralGlobal += montant;
+ 
+            finalResults.push({
+                article: artMatch ? artMatch['ARTICLE'] : '-',
+                designation: key,
+                qty: qty,
+                isPvc: false,
+                isGrillage: false,
+                prix: artMatch && !isNaN(unitPrice) ? unitPrice : '-',
+                montant: montant > 0 ? montant : '-'
             });
         });
 
-        zip.file(sheetPath, clearFormulaCache(sheetXml));
-
-        const cartoucheSheet = getSheetPath(zip, wbXml, relsXml, "Cartouche");
-        if(cartoucheSheet){
-            let cartXml = await zip.file(cartoucheSheet).async("string");
-            cartXml = setCellValue(cartXml, "C13", nomProjet);
-            zip.file(cartoucheSheet, clearFormulaCache(cartXml));
-        }
-
-        let wbXmlUpdated = wbXml;
-        if(wbXmlUpdated.includes("<calcPr")){
-            wbXmlUpdated = wbXmlUpdated.replace(/<calcPr\b[^/]*/, match => {
-                match = match.replace(/\bfullCalcOnLoad="[^"]*"/, "");
-                match = match.replace(/\bforceFullCalc="[^"]*"/, "");
-                return match.trimEnd() + ` fullCalcOnLoad="1" forceFullCalc="1"`;
+        // 2. معالجة حسابات قنوات PVC بناءً على الصيغة المطلوبة بدقة: TUYAUX PVC PN 16 Ø[Diameter]
+        Object.keys(pvcSummary).forEach(diameter => {
+            // صياغة النص المستهدف للبحث بجدول الأسعار تلقائياً بناءً على القطر المدخل
+            const targetedDesignation = `TUYAUX PVC PN 16 Ø${diameter}`;
+            const targetClean = targetedDesignation.toUpperCase().replace(/\s+/g, ' ');
+            
+            const artMatch = dbArticlesPrice.find(a => {
+                if (!a['DESIGNATION']) return false;
+                const dbDesigClean = String(a['DESIGNATION']).trim().toUpperCase().replace(/\s+/g, ' ');
+                return dbDesigClean === targetClean || dbDesigClean.includes(targetClean) || targetClean.includes(dbDesigClean);
             });
-        }else{
-            wbXmlUpdated = wbXmlUpdated.replace(/<\/workbook>/, `<calcPr fullCalcOnLoad="1" forceFullCalc="1"/></workbook>`);
-        }
-        zip.file("xl/workbook.xml", wbXmlUpdated);
 
-        const blob = await zip.generateAsync({
-            type:"blob",
-            mimeType:"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-            compression:"DEFLATE",
-            compressionOptions:{level:6}
+            const totalLength = pvcSummary[diameter];
+            const unitPrice = artMatch ? parseFloat(artMatch['PRIX']) : 0;
+            const montant = !isNaN(unitPrice) ? (totalLength * unitPrice) : 0;
+
+            totalGeneralGlobal += montant;
+
+            finalResults.push({
+                article: artMatch ? artMatch['ARTICLE'] : '-',
+                designation: targetedDesignation, // عرض العبارة الرسمية بالجدول المستخرج
+                qty: totalLength,
+                isPvc: true,
+                isGrillage: false,
+                prix: artMatch && !isNaN(unitPrice) ? unitPrice : '-',
+                montant: montant > 0 ? montant : '-'
+            });
         });
-        const date = new Date().toISOString().slice(0,10);
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement("a");
-        a.href = url; a.download = nomProjet+"_"+date+".xlsx"; a.click();
-        URL.revokeObjectURL(url);
-        alert("Fichier généré avec succès");
-    }catch(err){ console.error(err); alert("Erreur : "+err.message); }
-}
 
-/* =====================================
-   HELPER — getSheetPath
-===================================== */
+        // 3. الإضافة التلقائية لـ GRILLAGE AVERTISSEUR بمجموع أطوال القنوات
+        if (totalPvcLength > 0) {
+            const grillageKey = "GRILLAGE AVERTISSEUR";
+            
+            const artMatch = dbArticlesPrice.find(a => {
+                if (!a['DESIGNATION']) return false;
+                const dbDesigClean = String(a['DESIGNATION']).trim().toUpperCase().replace(/\s+/g, ' ');
+                return dbDesigClean.includes(grillageKey) || grillageKey.includes(dbDesigClean);
+            });
 
-function getSheetPath(zip, wbXml, relsXml, name){
-    const matches = [...wbXml.matchAll(/<sheet\b[^>]*name="([^"]*)"[^>]*r:id="([^"]*)"/g)];
-    let rId = null;
-    matches.forEach(m => { if(m[1].trim()===name) rId = m[2]; });
-    if(!rId) return null;
-    const rel =
-        relsXml.match(new RegExp(`Id="${rId}"[^>]*Target="([^"]*)"`)) ||
-        relsXml.match(new RegExp(`Target="([^"]*)"[^>]*Id="${rId}"`));
-    if(!rel) return null;
-    return "xl/" + rel[1].replace(/^\.\.\//, "");
-}
+            const unitPrice = artMatch ? parseFloat(artMatch['PRIX']) : 0;
+            const montant = !isNaN(unitPrice) ? (totalPvcLength * unitPrice) : 0;
 
-/* =====================================
-   HELPER — setCellValue
-===================================== */
+            totalGeneralGlobal += montant;
 
-function setCellValue(xml, addr, value){
-    const rowNum = addr.replace(/[A-Z]+/g, "");
-    const numStr = String(value).trim().replace(",", ".");
-    const isNum  = numStr !== "" && !isNaN(parseFloat(numStr)) && isFinite(numStr);
-    const numVal = isNum ? parseFloat(numStr) : null;
-    const esc    = String(value).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
-
-    const loc = findCell(xml, addr);
-
-    if(loc){
-        const existing  = xml.slice(loc.start, loc.end);
-        const styleMatch= existing.match(/\bs="([^"]*)"/);
-        const styleAttr = styleMatch ? ` s="${styleMatch[1]}"` : "";
-        const newCell   = isNum
-            ? `<c r="${addr}"${styleAttr}><v>${numVal}</v></c>`
-            : `<c r="${addr}"${styleAttr} t="inlineStr"><is><t>${esc}</t></is></c>`;
-
-        if(existing.includes("<f")){
-            let updated = existing;
-            const vVal  = isNum ? String(numVal) : esc;
-            updated = updated.replace(/\bt="[^"]*"/, "");
-            if(!isNum) updated = updated.replace(/^<c\b/, `<c t="str"`);
-            if(/<v>/.test(updated))       updated = updated.replace(/<v>[^<]*<\/v>/, `<v>${vVal}</v>`);
-            else if(/<v\/>/.test(updated)) updated = updated.replace(/<v\/>/, `<v>${vVal}</v>`);
-            else                           updated = updated.replace(/<\/c>/, `<v>${vVal}</v></c>`);
-            return xml.slice(0,loc.start) + updated + xml.slice(loc.end);
+            finalResults.push({
+                article: artMatch ? artMatch['ARTICLE'] : '-',
+                designation: grillageKey,
+                qty: totalPvcLength,
+                isPvc: false,
+                isGrillage: true, 
+                prix: artMatch && !isNaN(unitPrice) ? unitPrice : '-',
+                montant: montant > 0 ? montant : '-'
+            });
         }
-        return xml.slice(0,loc.start) + newCell + xml.slice(loc.end);
-    }
+ 
+        const tbody = document.querySelector('#resultTable tbody');
+        tbody.innerHTML = '';
+       
+        if (finalResults.length === 0) {
+            tbody.innerHTML = `<tr><td colspan="5" class="text-danger py-2 small">Aucune pièce trouvée. Veuillez vérifier les diamètres sélectionnés.</td></tr>`;
+            document.getElementById('totalGeneralCell').innerText = '-';
+        } else {
+            finalResults.forEach(res => {
+                let qtyUnit = '';
+                let rowClass = '';
+                
+                if (res.isPvc) {
+                    qtyUnit = ' m';
+                    rowClass = 'table-success fw-bold'; 
+                } else if (res.isGrillage) {
+                    qtyUnit = ' m';
+                    rowClass = 'table-warning fw-bold'; 
+                }
 
-    const newCell = isNum
-        ? `<c r="${addr}"><v>${numVal}</v></c>`
-        : `<c r="${addr}" t="inlineStr"><is><t>${esc}</t></is></c>`;
-
-    const rowTag = xml.match(new RegExp(`<row\\b[^>]*\\br="${rowNum}"[^>]*>`));
-    if(rowTag){
-        const rowStart  = xml.indexOf(rowTag[0]) + rowTag[0].length;
-        const rowEnd    = xml.indexOf("</row>", rowStart);
-        const colLetter = addr.replace(/\d+/g, "");
-        let insertPos = rowStart, i = rowStart;
-        while(i < rowEnd){
-            const cPos = xml.indexOf("<c ", i);
-            if(cPos===-1 || cPos>=rowEnd) break;
-            const gt = xml.indexOf(">", cPos);
-            const openTag = xml.slice(cPos, gt+1);
-            const refMatch = openTag.match(/\br="([A-Z]+)\d+"/);
-            if(refMatch && colCompare(refMatch[1], colLetter) > 0){ insertPos = cPos; break; }
-            if(openTag.trimEnd().endsWith("/>")){ i = gt+1; }
-            else{ const close = xml.indexOf("</c>", gt); i = close+4; }
-            insertPos = i;
+                tbody.innerHTML += `
+                    <tr class="${rowClass}">
+                        <td><span class="text-muted fw-bold">${res.article}</span></td>
+                        <td class="text-start small"><strong>${res.designation}</strong></td>
+                        <td><span class="badge bg-success fs-6">${res.qty.toFixed(2)}${qtyUnit}</span></td>
+                        <td>${res.prix !== '-' ? `<span class="text-secondary fw-bold">${res.prix.toFixed(2)}</span>` : '-'}</td>
+                        <td>${res.montant !== '-' ? `<span class="text-primary fw-bold">${res.montant.toFixed(2)}</span>` : '-'}</td>
+                    </tr>`;
+            });
+            document.getElementById('totalGeneralCell').innerText = totalGeneralGlobal.toFixed(2) + ' DH';
         }
-        return xml.slice(0,insertPos) + newCell + xml.slice(insertPos);
+        document.getElementById('resultCard').classList.remove('d-none');
+        document.getElementById('resultCard').scrollIntoView({ behavior: 'smooth' });
     }
-
-    const sd = xml.indexOf("</sheetData>");
-    if(sd !== -1) return xml.slice(0,sd) + `<row r="${rowNum}">${newCell}</row>` + xml.slice(sd);
-    return xml;
-}
-
-/* =====================================
-   HELPER — findCell
-===================================== */
-
-function findCell(xml, addr){
-    let i = 0;
-    while(true){
-        const start = xml.indexOf("<c ", i);
-        if(start===-1) return null;
-        const gt = xml.indexOf(">", start);
-        if(gt===-1) return null;
-        const openTag = xml.slice(start, gt+1);
-        if(new RegExp(`\\br="${addr}"`).test(openTag)){
-            if(openTag.trimEnd().endsWith("/>")) return {start, end:gt+1};
-            const close = xml.indexOf("</c>", gt);
-            if(close===-1) return null;
-            return {start, end:close+4};
-        }
-        i = gt+1;
+ 
+    function exportToExcel() {
+        if(tempRows.length === 0) return;
+ 
+        const projName = document.getElementById('projectName').value || "Non spécifié";
+        const commune = document.getElementById('projectCommune').value || "Non spécifiée";
+        const pDate = document.getElementById('projectDate').value || "";
+ 
+        const rowsSaisie = tempRows.map(r => ({ "A": r.type, "B": r.source, "C": r.proj, "D": r.entryType === 'pvc' ? 'Conduite' : 'Noeud' }));
+        const dataSaisie = [
+            ["Projet:", projName, "Commune:", commune, "Date:", pDate],
+            [],
+            ["Élément / Nom du Nœud", "Source / Diamètre (mm)", "Projeté / Longueur", "Type"],
+            ...rowsSaisie.map(r => [r.A, r.B ? r.B + " mm" : "-", r.C ? (r.D === 'Conduite' ? r.C + " m" : r.C + " mm") : "-", r.D])
+        ];
+ 
+        const rowsResultat = finalResults.map(r => ([
+            r.article, 
+            r.designation, 
+            r.qty, 
+            r.prix !== '-' ? r.prix : '-', 
+            r.montant !== '-' ? r.montant : '-'
+        ]));
+        
+        const dataResultat = [
+            ["Projet:", projName, "Commune:", commune, "Date:", pDate],
+            [],
+            ["N° Article", "Désignation de l'Équipement / Conduite", "Quantité Totale", "Prix Unitaire (DH)", "Montant Total (DH)"],
+            ...rowsResultat,
+            ["", "", "", "Total Général :", totalGeneralGlobal > 0 ? totalGeneralGlobal : "-"]
+        ];
+ 
+        const wb = XLSX.utils.book_new();
+        const wsSaisie = XLSX.utils.aoa_to_sheet(dataSaisie);
+        const wsResultat = XLSX.utils.aoa_to_sheet(dataResultat);
+ 
+        XLSX.utils.book_append_sheet(wb, wsSaisie, "Saisie Globale");
+        XLSX.utils.book_append_sheet(wb, wsResultat, "Récapitulatif Matériel");
+ 
+        const fileName = `Export_AEP_${commune}_${pDate.replace(/-/g, "")}.xlsx`;
+        XLSX.writeFile(wb, fileName);
     }
-}
-
-/* =====================================
-   HELPER — colCompare
-===================================== */
-
-function colCompare(a, b){
-    if(a.length !== b.length) return a.length - b.length;
-    return a < b ? -1 : a > b ? 1 : 0;
-}
-
-/* =====================================
-   HELPER — clearFormulaCache
-===================================== */
-
-function clearFormulaCache(xml){
-    let result = "", i = 0;
-    while(i < xml.length){
-        const cStart = xml.indexOf("<c ", i);
-        if(cStart===-1){ result += xml.slice(i); break; }
-        result += xml.slice(i, cStart);
-        const gt = xml.indexOf(">", cStart);
-        if(gt===-1){ result += xml.slice(cStart); break; }
-        const openTag = xml.slice(cStart, gt+1);
-        if(openTag.trimEnd().endsWith("/>")){ result += openTag; i = gt+1; continue; }
-        const closePos = xml.indexOf("</c>", gt);
-        if(closePos===-1){ result += xml.slice(cStart); break; }
-        const inner = xml.slice(gt+1, closePos);
-        if(inner.includes("<f")){
-            const cleaned = inner.replace(/<v>[^<]*<\/v>/g,"").replace(/<v\/>/g,"");
-            result += openTag + cleaned + "</c>";
-        }else{
-            result += openTag + inner + "</c>";
-        }
-        i = closePos+4;
+ 
+    function saveProject() {
+        if(tempRows.length === 0) return alert('Aucune donnée !');
+        const projectPackage = {
+            metadata: {
+                name: document.getElementById('projectName').value,
+                commune: document.getElementById('projectCommune').value,
+                date: document.getElementById('projectDate').value
+            },
+            rows: tempRows
+        };
+        const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(projectPackage));
+        const downloadAnchor = document.createElement('a');
+        downloadAnchor.setAttribute("href", dataStr);
+        downloadAnchor.setAttribute("download", `Backup_AEP_${projectPackage.metadata.commune || 'Projet'}.json`);
+        document.body.appendChild(downloadAnchor);
+        downloadAnchor.click();
+        downloadAnchor.remove();
     }
-    return result;
-}
+ 
+    function importProject(event) {
+        const input = event.target;
+        const reader = new FileReader();
+        reader.onload = function(){
+            try {
+                const imported = JSON.parse(reader.result);
+                if(imported.metadata) {
+                    document.getElementById('projectName').value = imported.metadata.name || "";
+                    document.getElementById('projectCommune').value = imported.metadata.commune || "";
+                    document.getElementById('projectDate').value = imported.metadata.date || "";
+                    tempRows = imported.rows || [];
+                } else {
+                    tempRows = imported;
+                }
+                renderSaisieTable();
+                alert('Projet restauré avec succès.');
+            } catch(e) { alert('Fichier invalide.'); }
+        };
+        reader.readAsText(input.files[0]);
+    }
 </script>
-
 </body>
 </html>
