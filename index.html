@@ -45,7 +45,7 @@
         <div class="text-center mb-3">
             <img src="image.png" alt="Logo Application" class="logo-login" onerror="this.src='assets/image.png';">
             <div class="admin-text admin-text-login mt-2">
-                Direction préfectorale<br>
+                Direction prefectorale<br>
                 AIN CHOCK HAY HASSANI<br>
                 DEPARTEMENT ETUDE ET TRAVAUX<br>
                 DIVISION EAU POTABLE
@@ -80,33 +80,33 @@
         </div>
         <div class="border-start ps-3 d-none d-sm-block" style="border-color: rgba(255,255,255,0.3) !important;">
             <div class="admin-text text-start text-white opacity-75 mb-2" style="font-size:0.7rem;">
-                Direction préfectorale AIN CHOCK HAY HASSANI<br>
+                Direction prefectorale AIN CHOCK HAY HASSANI<br>
                 DEPARTEMENT ETUDE ET TRAVAUX | DIVISION EAU POTABLE
             </div>
-            <h2 class="mb-0 text-start">Liste des matériels & des Équipements AEP</h2>
+            <h2 class="mb-0 text-start">Liste des materiels & des Equipements AEP</h2>
         </div>
         <div class="d-block d-sm-none">
-            <h2 class="mb-0">Liste des matériels & Équipements AEP</h2>
+            <h2 class="mb-0">Liste des materiels & Equipements AEP</h2>
         </div>
     </div>
  
     <div class="card border-primary" id="uploadCard">
-        <h5 class="card-title text-primary mb-2">📁 Fichier de Référence (Base de données)</h5>
-        <div id="dbStatusMessage" class="alert alert-info py-2 small mb-2">Vérification de la base de données locale...</div>
+        <h5 class="card-title text-primary mb-2">📁 Fichier de Reference (Base de donnees)</h5>
+        <div id="dbStatusMessage" class="alert alert-info py-2 small mb-2">Verification de la base de donnees locale...</div>
         <div id="uploadInputContainer" class="d-none">
-            <p class="text-muted small mb-2">Sélectionnez le fichier <code class="fw-bold">NOEUD TYPE3.xlsx</code> pour l'enregistrer définitivement.</p>
+            <p class="text-muted small mb-2">Selectionnez le fichier <code class="fw-bold">NOEUD TYPE3.xlsx</code> pour l'enregistrer definitivement.</p>
             <input type="file" class="form-control form-control-sm" id="excelRefFile" accept=".xlsx, .xls, .csv" onchange="handleRefExcel(event)">
         </div>
         <div id="dbActions" class="d-none mt-1">
-            <button class="btn btn-sm btn-outline-danger py-1" onclick="clearLocalDB()">🔄 Changer / Mettre à jour le fichier Excel</button>
+            <button class="btn btn-sm btn-outline-danger py-1" onclick="clearLocalDB()">🔄 Changer / Mettre a jour le fichier Excel</button>
         </div>
-        <div id="uploadError" class="mt-2 text-danger fw-bold small d-none">❌ Erreur de structure (colonnes Noeud, Source, Projete manquantes ou deuxième feuille introuvable).</div>
+        <div id="uploadError" class="mt-2 text-danger fw-bold small d-none">❌ Erreur de structure (colonnes Noeud, Source, Projete manquantes ou deuxieme feuille introuvable).</div>
     </div>
  
     <div id="mainAppContent" style="opacity: 0.2; pointer-events: none; transition: all 0.3s ease;">
        
         <div class="card border-start border-info border-4">
-            <h5 class="card-title text-info mb-3">📋 Informations Générales du Projet</h5>
+            <h5 class="card-title text-info mb-3">📋 Informations Generales du Projet</h5>
             <div class="row g-2">
                 <div class="col-12 col-sm-6">
                     <label class="form-label fw-bold mb-1">Nom du projet</label>
@@ -116,7 +116,7 @@
                     <label class="form-label fw-bold mb-1">Commune</label>
                     <select id="projectCommune" class="form-select form-select-sm">
                         <option value="" selected disabled>Choisir...</option>
-                        <option value="AC">Aïn Chock (AC)</option>
+                        <option value="AC">Ain Chock (AC)</option>
                         <option value="HH">Hay Hassani (HH)</option>
                     </select>
                 </div>
@@ -128,13 +128,13 @@
         </div>
  
         <div class="card">
-            <h5 class="card-title text-primary mb-3">➕ Ajouter un nœود</h5>
+            <h5 class="card-title text-primary mb-3">➕ Ajouter un noeud</h5>
             <form id="nodeForm" class="row g-2" onsubmit="addNodeRow(event)">
                 <div class="col-6 col-md-3">
-                    <label class="form-label fw-bold mb-1">Type de nœود</label>
+                    <label class="form-label fw-bold mb-1">Type de noeud</label>
                     <select id="nodeType" class="form-select form-select-sm" onchange="toggleInputsBasedOnType()" required>
                         <option value="" selected disabled>Choisir...</option>
-                        <option value="N">N (Nœud normal)</option>
+                        <option value="N">N (Noeud normal)</option>
                         <option value="VC">VC (Vanne Cheval)</option>
                         <option value="PI">PI (Poteau Incendie)</option>
                         <option value="RN">RN (Raccordement Normal)</option>
@@ -142,23 +142,23 @@
                     </select>
                 </div>
                 <div class="col-6 col-md-3">
-                    <label class="form-label fw-bold mb-1">Numéro / Index</label>
+                    <label class="form-label fw-bold mb-1">Numero / Index</label>
                     <input type="text" id="nodeNumber" class="form-control form-control-sm" placeholder="Ex: 1, 2, A..." required>
                 </div>
                 <div class="col-6 col-md-3">
                     <label class="form-label fw-bold mb-1">Conduite Source</label>
                     <select id="nodeSource" class="form-select form-select-sm" required>
-                        <option value="" selected disabled>Diamètre...</option>
+                        <option value="" selected disabled>Diametre...</option>
                     </select>
                 </div>
                 <div class="col-6 col-md-3">
-                    <label class="form-label fw-bold mb-1">Conduite Projetée</label>
+                    <label class="form-label fw-bold mb-1">Conduite Projetee</label>
                     <select id="nodeProj" class="form-select form-select-sm" required>
-                        <option value="" selected disabled>Diamètre...</option>
+                        <option value="" selected disabled>Diametre...</option>
                     </select>
                 </div>
                 <div class="col-12 mt-3">
-                    <button type="submit" class="btn btn-primary btn-sm fw-bold w-100">➕ Insérer à la liste</button>
+                    <button type="submit" class="btn btn-primary btn-sm fw-bold w-100">➕ Inserer a la liste</button>
                 </div>
             </form>
         </div>
@@ -167,9 +167,9 @@
             <h5 class="card-title text-success mb-3">➕ Ajouter conduites PVC</h5>
             <form id="pvcForm" class="row g-2" onsubmit="addPvcRow(event)">
                 <div class="col-12 col-md-6">
-                    <label class="form-label fw-bold mb-1">Diamètre Nominal (DN)</label>
+                    <label class="form-label fw-bold mb-1">Diametre Nominal (DN)</label>
                     <select id="pvcDiameter" class="form-select form-select-sm" required>
-                        <option value="" selected disabled>Choisir le diamètre...</option>
+                        <option value="" selected disabled>Choisir le diametre...</option>
                         <option value="75">75 mm</option>
                         <option value="90">90 mm</option>
                         <option value="110">110 mm</option>
@@ -183,7 +183,7 @@
                     <input type="number" step="any" id="pvcLength" class="form-control form-control-sm" placeholder="Ex: 150, 45.5..." required min="0.01">
                 </div>
                 <div class="col-12 mt-3">
-                    <button type="submit" class="btn btn-success btn-sm fw-bold w-100">➕ Insérer la conduite</button>
+                    <button type="submit" class="btn btn-success btn-sm fw-bold w-100">➕ Inserer la conduite</button>
                 </div>
             </form>
         </div>
@@ -195,32 +195,32 @@
         </div>
  
         <div class="card">
-            <h5 class="card-title text-secondary mb-2">📋 Liste des éléments saisis</h5>
+            <h5 class="card-title text-secondary mb-2">📋 Liste des elements saisis</h5>
             <div class="table-responsive">
                 <table class="table table-striped table-hover text-center align-middle mb-0" id="saisieTable">
                     <thead class="table-dark">
                         <tr>
-                            <th>Élément / Nœud</th>
-                            <th>Source / Diamètre PVC</th>
-                            <th>Projeté / Longueur (m)</th>
+                            <th>Element / Noeud</th>
+                            <th>Source / Diametre PVC</th>
+                            <th>Projete / Longueur (m)</th>
                             <th>Actions</th>
                         </tr>
                     </thead>
                     <tbody>
                         <tr>
-                            <td colspan="4" class="text-muted text-center py-3">Aucun élément saisi.</td>
+                            <td colspan="4" class="text-muted text-center py-3">Aucun element saisi.</td>
                         </tr>
                     </tbody>
                 </table>
             </div>
             <div class="mt-3">
-                <button class="btn btn-success fw-bold w-100" onclick="calculateEquipments()">🔄 Lancer le Calcul Cumulé</button>
+                <button class="btn btn-success fw-bold w-100" onclick="calculateEquipments()">🔄 Lancer le Calcul Cumule</button>
             </div>
         </div>
  
         <div class="card d-none" id="resultCard">
             <div class="d-flex flex-column mb-3">
-                <h5 class="card-title text-success fw-bold mb-2">📊 Quantités Totales Requises</h5>
+                <h5 class="card-title text-success fw-bold mb-2">📊 Quantites Totales Requises</h5>
                 <button onclick="exportToExcel()" class="btn btn-sm btn-outline-success fw-bold w-100">📥 Exporter vers Excel (.xlsx)</button>
             </div>
             <div class="table-responsive">
@@ -228,8 +228,8 @@
                     <thead class="table-light">
                         <tr>
                             <th>N° Article</th>
-                            <th class="text-start">Désignation Équipement / Conduite</th>
-                            <th>Quantité (U / m)</th>
+                            <th class="text-start">Designation Equipement / Conduite</th>
+                            <th>Quantite (U / m)</th>
                             <th>Prix Unitaire (DH)</th>
                             <th>Montant Total (DH)</th>
                         </tr>
@@ -237,7 +237,7 @@
                     <tbody></tbody>
                     <tfoot class="table-secondary fw-bold text-primary">
                         <tr>
-                            <td colspan="4" class="text-end text-uppercase fs-6">Total Général :</td>
+                            <td colspan="4" class="text-end text-uppercase fs-6">Total General :</td>
                             <td id="totalGeneralCell" class="fs-6">-</td>
                         </tr>
                     </tfoot>
@@ -282,7 +282,7 @@
                 dbReference = JSON.parse(localData);
                 dbArticlesPrice = localArticles ? JSON.parse(localArticles) : [];
                 msgDiv.className = "alert alert-success py-2 small mb-1";
-                msgDiv.innerHTML = "✅ Base de données Excel chargée en local.";
+                msgDiv.innerHTML = "✅ Base de donnees Excel chargee en local.";
                 document.getElementById('uploadInputContainer').classList.add('d-none');
                 document.getElementById('dbActions').classList.remove('d-none');
                 populateDropdowns();
@@ -292,7 +292,7 @@
             }
         } else {
             msgDiv.className = "alert alert-warning py-2 small mb-1";
-            msgDiv.innerHTML = "⚠️ Aucune base de données en mémoire. Veuillez charger le fichier Excel.";
+            msgDiv.innerHTML = "⚠️ Aucune base de donnees en memoire. Veuillez charger le fichier Excel.";
             document.getElementById('uploadInputContainer').classList.remove('d-none');
             document.getElementById('dbActions').classList.add('d-none');
             deactivateMainApp();
@@ -339,9 +339,9 @@
                     let cleanedRow = {};
                     for (let key in row) {
                         let cleanKey = key.trim();
-                        if (cleanKey === "Nœud" || cleanKey === "Noeud") cleanKey = "Noeud";
+                        if (cleanKey === "Noeud" || cleanKey === "Noeud") cleanKey = "Noeud";
                         if (cleanKey === "Conduite source") cleanKey = "Source";
-                        if (cleanKey === "Conduite projeté" || cleanKey === "Conduite projetée") cleanKey = "Projete";
+                        if (cleanKey === "Conduite projete" || cleanKey === "Conduite projetee") cleanKey = "Projete";
                         cleanedRow[cleanKey] = row[key];
                     }
                     return cleanedRow;
@@ -451,7 +451,7 @@
     function renderSaisieTable() {
         const tbody = document.querySelector('#saisieTable tbody');
         if (tempRows.length === 0) {
-            tbody.innerHTML = `<tr><td colspan="4" class="text-muted text-center py-3">Aucun élément saisi.</td></tr>`;
+            tbody.innerHTML = `<tr><td colspan="4" class="text-muted text-center py-3">Aucun element saisi.</td></tr>`;
             return;
         }
         tbody.innerHTML = '';
@@ -500,7 +500,7 @@
  
     function calculateEquipments() {
         if (tempRows.length === 0) {
-            alert('Veuillez ajouter au moins un élément !');
+            alert('Veuillez ajouter au moins un element !');
             return;
         }
         let summary = {};
@@ -640,7 +640,7 @@
         tbody.innerHTML = '';
        
         if (finalResults.length === 0) {
-            tbody.innerHTML = `<tr><td colspan="5" class="text-danger py-2 small">Aucune pièce trouvée. Veuillez vérifier les diamètres sélectionnés.</td></tr>`;
+            tbody.innerHTML = `<tr><td colspan="5" class="text-danger py-2 small">Aucune piece trouvee. Veuillez verifier les diametres selectionnes.</td></tr>`;
             document.getElementById('totalGeneralCell').innerText = '-';
         } else {
             finalResults.forEach(res => {
@@ -673,15 +673,15 @@
     function exportToExcel() {
         if(tempRows.length === 0) return;
  
-        const projName = document.getElementById('projectName').value || "Non spécifié";
-        const commune = document.getElementById('projectCommune').value || "Non spécifiée";
+        const projName = document.getElementById('projectName').value || "Non specifie";
+        const commune = document.getElementById('projectCommune').value || "Non specifiee";
         const pDate = document.getElementById('projectDate').value || "";
  
         const rowsSaisie = tempRows.map(r => ({ "A": r.type, "B": r.source, "C": r.proj, "D": r.entryType === 'pvc' ? 'Conduite' : 'Noeud' }));
         const dataSaisie = [
             ["Projet:", projName, "Commune:", commune, "Date:", pDate],
             [],
-            ["Élément / Nom du Nœud", "Source / Diamètre (mm)", "Projeté / Longueur", "Type"],
+            ["Element / Nom du Noeud", "Source / Diametre (mm)", "Projete / Longueur", "Type"],
             ...rowsSaisie.map(r => [r.A, r.B ? r.B + " mm" : "-", r.C ? (r.D === 'Conduite' ? r.C + " m" : r.C + " mm") : "-", r.D])
         ];
  
@@ -696,9 +696,9 @@
         const dataResultat = [
             ["Projet:", projName, "Commune:", commune, "Date:", pDate],
             [],
-            ["N° Article", "Désignation de l'Équipement / Conduite", "Quantité Totale", "Prix Unitaire (DH)", "Montant Total (DH)"],
+            ["N° Article", "Designation de l'Equipement / Conduite", "Quantite Totale", "Prix Unitaire (DH)", "Montant Total (DH)"],
             ...rowsResultat,
-            ["", "", "", "Total Général :", totalGeneralGlobal > 0 ? totalGeneralGlobal : "-"]
+            ["", "", "", "Total General :", totalGeneralGlobal > 0 ? totalGeneralGlobal : "-"]
         ];
  
         const wb = XLSX.utils.book_new();
@@ -706,14 +706,14 @@
         const wsResultat = XLSX.utils.aoa_to_sheet(dataResultat);
  
         XLSX.utils.book_append_sheet(wb, wsSaisie, "Saisie Globale");
-        XLSX.utils.book_append_sheet(wb, wsResultat, "Récapitulatif Matériel");
+        XLSX.utils.book_append_sheet(wb, wsResultat, "Recapitulatif Materiel");
  
         const fileName = `Export_AEP_${commune}_${pDate.replace(/-/g, "")}.xlsx`;
         XLSX.writeFile(wb, fileName);
     }
  
     function saveProject() {
-        if(tempRows.length === 0) return alert('Aucune donnée !');
+        if(tempRows.length === 0) return alert('Aucune donnee !');
         const projectPackage = {
             metadata: {
                 name: document.getElementById('projectName').value,
@@ -746,7 +746,7 @@
                     tempRows = imported;
                 }
                 renderSaisieTable();
-                alert('Projet restauré avec succès.');
+                alert('Projet restaure avec succes.');
             } catch(e) { alert('Fichier invalide.'); }
         };
         reader.readAsText(input.files[0]);
